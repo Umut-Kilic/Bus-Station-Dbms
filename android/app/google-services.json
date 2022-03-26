@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "656126634147",
+    "project_id": "yazlab2-proje-2",
+    "storage_bucket": "yazlab2-proje-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656126634147:android:2233fde55aa6876d3d3716",
+        "android_client_info": {
+          "package_name": "com.example.yazlab2_proje2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656126634147-04gc5oqaed0tnd1mls6q0tlc8agmk049.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yazlab2_proje2",
+            "certificate_hash": "3b344932d0cbbdf7b087e787c85c290efd4f23c2"
+          }
+        },
+        {
+          "client_id": "656126634147-24e5q0d8dvjrvgea9tdtoorqsje4gi0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_qmptPzd1VjLYq4KI18tfu1SyjgjmsgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "656126634147-24e5q0d8dvjrvgea9tdtoorqsje4gi0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
