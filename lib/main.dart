@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(Admin());
 }
 
-class MyApp extends StatelessWidget {
+class Admin extends StatelessWidget {
 
   final Future<FirebaseApp> _initialization=Firebase.initializeApp();
 
