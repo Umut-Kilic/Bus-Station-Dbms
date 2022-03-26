@@ -2,6 +2,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:yazlab2_proje2/UserDisplay.dart';
+import 'package:yazlab2_proje2/kayitOl.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,8 @@ class Kg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return MaterialApp(
 
       debugShowCheckedModeBanner: false,
@@ -52,16 +56,65 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
   final _firestore=FirebaseFirestore.instance;
 
   TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  /*Future<void> getData() async {
+    QuerySnapshot querySnapshot = await _firestore.collection("collection").getDocuments();
+    var list = querySnapshot.documents;
+    for (int i = 0; i < querySnapshot.documents.length; i++) {
+      var a = querySnapshot.documents[i];
+      print(a.documentID);
+    }
+  }*/
+
+  getDocumentData(ad,sifre) async{
+    CollectionReference userRef=_firestore.collection('Kisiler');
+    QuerySnapshot querySnapshot = await userRef.get();
+    final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    List liste=[];
+    for(int i=0;i<_docData.length;i++){
+      liste.add(_docData[i]);
+    }
+    bool usernameBool =false;
+    bool passwordBool =false;
+
+    for(int i=0;i<liste.length;i++){
+      print(liste[i]['Name']+"    "+liste[i]['Password']);
+      if(liste[i]['Name']==ad){
+        usernameBool=true;
+      }
+      if(liste[i]['Password']==sifre){
+        passwordBool=true;
+      }
+    }
+    if(usernameBool && passwordBool){
+      return true;
+    }
+    else{
+      return false;
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final width1 = MediaQuery.of(context).size.width * 0.7;
+    final width2 = MediaQuery.of(context).size.width;
+    final width3 = MediaQuery.of(context).size.width;
+    final width4 = MediaQuery.of(context).size.width;
+    final height1 = MediaQuery.of(context).size.height * 0.1;
+    final height2 = MediaQuery.of(context).size.height * 0.15;
+    final height3 = MediaQuery.of(context).size.height * 0.05;
+    final height4 = MediaQuery.of(context).size.height * 0.07;
 
     CollectionReference userRef=_firestore.collection('Kisiler');
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Admin Giriş Sayfası"),
+          title: Text("Kullanıcı Giriş Sayfası"),
         ),
         body: Center(
           child: Flexible(
@@ -69,7 +122,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(width: width1, height: height2),
+                  SizedBox(width: width1, height: height1),
                   SizedBox(
                     height: height2,
                     width: width1,
@@ -99,6 +152,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                     width: width1,
                     child: TextField(
                       controller: passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.blueGrey,
@@ -125,13 +179,33 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                     height: height4,
                     child: ElevatedButton(
                       onPressed: (){
-                        if(nameController.text==adminU && passwordController.text==adminP){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => KayitOl()));
+                      },
+                      child: Text("Kayıt ol"),
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.orange,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          )
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: width1, height: height3),
+                  SizedBox(
+                    width: width1,
+                    height: height4,
+                    child: ElevatedButton(
+                      onPressed: () async{
+                        bool sonuc=await getDocumentData(nameController.text, passwordController.text);
+                        if( sonuc){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
                         }
                         else{
+                          print("Yanlış aga");
 
+                          //TODO
                         }
+
                       },
                       child: Text("Giriş Yap"),
                       style: ElevatedButton.styleFrom(
@@ -141,7 +215,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                           )
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

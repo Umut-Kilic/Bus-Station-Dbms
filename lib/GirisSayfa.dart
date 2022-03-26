@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/AdminGiris.dart';
+import 'package:yazlab2_proje2/KullaniciGiris.dart';
 import 'package:yazlab2_proje2/main.dart';
 
 void main() {
@@ -37,15 +38,6 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
   @override
   Widget build(BuildContext context) {
 
-    final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width2 = MediaQuery.of(context).size.width;
-    final width3 = MediaQuery.of(context).size.width;
-    final width4 = MediaQuery.of(context).size.width;
-    final height1 = MediaQuery.of(context).size.height * 0.1;
-    final height2 = MediaQuery.of(context).size.height * 0.15;
-    final height3 = MediaQuery.of(context).size.height * 0.05;
-    final height4 = MediaQuery.of(context).size.height * 0.07;
-
     return Scaffold(
       appBar: AppBar(
           title: Text("Hoş Geldiniz")
@@ -76,7 +68,7 @@ class _GirisSayfasiState extends State<GirisSayfasi> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
                   onPressed: (){
-
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Kg()));
                   },
                   child: Text("Kullanıcı Giriş",
                     style: TextStyle(

@@ -1,39 +1,66 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:yazlab2_proje2/main.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(Ad());
+  runApp(Kayit());
 }
 
-class Ad extends StatelessWidget {
+
+class Kayit extends StatelessWidget {
+
+  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: AdminGiris(),
+
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: FutureBuilder(
+            future: _initialization,
+            builder: (context,snapshot){
+              if(snapshot.hasError){
+                return Center(child: Text("Beklenmeyen bir haa ortaya çıktı"));
+              }
+              else if(snapshot.hasData){
+                return KayitOl();
+              }
+              else{
+                return Center(child: CircularProgressIndicator());
+              }
+            }
+        )
+
     );
   }
 }
 
-class AdminGiris extends StatefulWidget {
-  const AdminGiris({Key? key}) : super(key: key);
+class KayitOl extends StatefulWidget {
+  const KayitOl({Key? key}) : super(key: key);
 
   @override
-  State<AdminGiris> createState() => _AdminGirisState();
+  State<KayitOl> createState() => _KayitOlState();
 }
 
-class _AdminGirisState extends State<AdminGiris> {
-  final adminU = "Umut";
-  final adminP = "Goksel";
+class _KayitOlState extends State<KayitOl> {
+
+  final _firestore=FirebaseFirestore.instance;
 
   TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+
     final width1 = MediaQuery.of(context).size.width * 0.7;
     final width2 = MediaQuery.of(context).size.width;
     final width3 = MediaQuery.of(context).size.width;
@@ -43,9 +70,11 @@ class _AdminGirisState extends State<AdminGiris> {
     final height3 = MediaQuery.of(context).size.height * 0.05;
     final height4 = MediaQuery.of(context).size.height * 0.07;
 
+    CollectionReference userRef=_firestore.collection('Kisiler');
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("Admin Giriş Sayfası"),
+          title: Text("Kullanıcı Kayıt Sayfası"),
         ),
         body: Center(
           child: Flexible(
@@ -53,7 +82,7 @@ class _AdminGirisState extends State<AdminGiris> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(width: width1, height: height2),
+                  SizedBox(width: width1, height: height1),
                   SizedBox(
                     height: height2,
                     width: width1,
@@ -72,7 +101,32 @@ class _AdminGirisState extends State<AdminGiris> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              new BorderSide(color: Colors.green, width: 3.0),
+                          new BorderSide(color: Colors.green, width: 3.0),
+                          borderRadius: new BorderRadius.circular(25.7),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: height2,
+                    width: width1,
+                    child: TextField(
+                      controller: emailController,
+                      keyboardType:TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.blueGrey,
+                        labelText: "Email",
+                        labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
+                        hintText: "Please enter your Email adress",
+                        hintStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: new BorderSide(color: Colors.black),
+                          borderRadius: new BorderRadius.circular(25.7),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                          new BorderSide(color: Colors.green, width: 3.0),
                           borderRadius: new BorderRadius.circular(25.7),
                         ),
                       ),
@@ -110,23 +164,18 @@ class _AdminGirisState extends State<AdminGiris> {
                     height: height4,
                     child: ElevatedButton(
                       onPressed: (){
-                        if(nameController.text==adminU && passwordController.text==adminP){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-
-                        }
-                        else{
-
-                        }
+                        Navigator.pop(context);
                       },
-                      child: Text("Giriş Yap"),
+                      child: Text("Kayıt ol",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
+                          primary: Colors.orange,
                           shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0),
                           )
                       ),
                     ),
-                  )
+                  ),
+
                 ],
               ),
             ),

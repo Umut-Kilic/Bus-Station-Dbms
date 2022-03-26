@@ -58,7 +58,6 @@ class _AdminPanelState extends State<AdminPanel> {
   Widget build(BuildContext context) {
 
     CollectionReference userRef=_firestore.collection('Kisiler');
-    var gokselRef=userRef.doc('ZWjfnoUgscUIlngIBb5v');
     guncelle() async{
       await userRef.doc(nameController.text).update({'Name':nameController.text});
       await userRef.doc(nameController.text).update({'Password':passwordController.text});
@@ -73,29 +72,7 @@ class _AdminPanelState extends State<AdminPanel> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*Text('${gokselRef.id}',style: TextStyle(fontWeight: FontWeight.bold)),
-              ElevatedButton(
-                  onPressed: () async{
-                   var response= await gokselRef.get();
-                   dynamic map=response.data();
-                   print(map['Name']);
-                  }
-                  , child: Text("Gokseli getir (DocumentSnapshot)")
-              ),
-              ElevatedButton(
-                  onPressed: () async{
-                    var response= await userRef.get();
-                    var list=response.docs;
-                    print(list.first.data());
-                  }
-                  , child: Text("Gokseli getir (QuerySnapshot)")
-              ),
-              StreamBuilder<DocumentSnapshot>(
-                stream: gokselRef.snapshots(),
-                builder: (context,AsyncSnapshot asyncSnapshot){
-                  return Text("${asyncSnapshot.data.data()}",style: TextStyle(color: Colors.red),);
-                },
-              ),*/
+
               StreamBuilder<QuerySnapshot>(
                   stream: userRef.snapshots(),
 
