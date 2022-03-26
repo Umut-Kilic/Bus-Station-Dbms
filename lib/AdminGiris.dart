@@ -112,7 +112,8 @@ class _AdminGirisState extends State<AdminGiris> {
                       onPressed: (){
                         if(nameController.text==adminU && passwordController.text==adminP){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-
+                          nameController.text="";
+                          passwordController.text="";
                         }
                         else{
 

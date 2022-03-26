@@ -57,11 +57,23 @@ class _AdminPanelState extends State<AdminPanel> {
   @override
   Widget build(BuildContext context) {
 
+    final width1 = MediaQuery.of(context).size.width * 0.7;
+    final width2 = MediaQuery.of(context).size.width;
+    final width3 = MediaQuery.of(context).size.width;
+    final width4 = MediaQuery.of(context).size.width;
+    final height1 = MediaQuery.of(context).size.height * 0.45;
+    final height2 = MediaQuery.of(context).size.height * 0.25;
+    final height3 = MediaQuery.of(context).size.height * 0.12;
+    final height4 = MediaQuery.of(context).size.height * 0.06;
+
     CollectionReference userRef=_firestore.collection('Kisiler');
     guncelle() async{
       await userRef.doc(nameController.text).update({'Name':nameController.text});
       await userRef.doc(nameController.text).update({'Password':passwordController.text});
       await userRef.doc(nameController.text).update({'Email':emailController.text});
+      nameController.text="";
+      passwordController.text="";
+      emailController.text="";
     }
     return Scaffold(
       appBar: AppBar(
@@ -73,99 +85,126 @@ class _AdminPanelState extends State<AdminPanel> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
 
-              StreamBuilder<QuerySnapshot>(
-                  stream: userRef.snapshots(),
-
-
-                  builder: (BuildContext context,AsyncSnapshot asyncSnapshot){
-
-                   if(asyncSnapshot.hasError){
-                     return Center(child: Text("Bir hata oluştu lütfen tekrar deneyiniz"),);
-                   }
-                   else{
-                     if(asyncSnapshot.hasData){
-                       List<DocumentSnapshot> listofDocumentSnapshot= asyncSnapshot.data.docs;
-
-                       return Flexible(
-                         child: ListView.builder(
-                           itemCount: listofDocumentSnapshot.length,
-                           itemBuilder: (context,index){
-                             return Card(
-                               child: ListTile(
-                                 title: Text("${(listofDocumentSnapshot[index].data() as Map)['Name']}",
-                                   style:TextStyle(color: Colors.black, fontSize:24,)
-                                   ),
-                                 subtitle:  Text("${(listofDocumentSnapshot[index].data() as Map)['Email']}",
-                                   style:TextStyle(color: Colors.white, fontSize:18,)
-                                 ),
-                                 trailing: IconButton(icon: Icon(Icons.delete),
-                                 onPressed: () async{
-                                   await listofDocumentSnapshot[index].reference.delete();
-                                 },
-                                 ),
-                               ),
-                               color: Colors.blueGrey,
-                             );
-                           },
-                         ),
-                       );
-                     }
-                     else{
-                        return Center(child: CircularProgressIndicator(),);
-                     }
-
-                   }
-
-                  }
-                  ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal:20.0,vertical: 100),
-                child: Form(
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                            hintText: "Plaese enter your name"
-                          ),
-                        ),
-                        TextFormField(
-                          controller: passwordController,
-                          decoration: InputDecoration(
-                              hintText: "Plaese enter your password"
-                          ),
-                        ),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                              hintText: "Plaese enter your email account"
-                          ),
-                        ),
+                padding: const EdgeInsets.all(0.0),
+                child: SizedBox(
+                  height: height1,
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: userRef.snapshots(),
 
-                      ],
-                    )
+
+                      builder: (BuildContext context,AsyncSnapshot asyncSnapshot){
+
+                       if(asyncSnapshot.hasError){
+                         return Center(child: Text("Bir hata oluştu lütfen tekrar deneyiniz"),);
+                       }
+                       else{
+                         if(asyncSnapshot.hasData){
+                           List<DocumentSnapshot> listofDocumentSnapshot= asyncSnapshot.data.docs;
+
+                           return Flexible(
+                             child: ListView.builder(
+                               itemCount: listofDocumentSnapshot.length,
+                               itemBuilder: (context,index){
+                                 return Card(
+                                   child: ListTile(
+                                     title: Text("${(listofDocumentSnapshot[index].data() as Map)['Name']}",
+                                       style:TextStyle(color: Colors.black, fontSize:24,)
+                                       ),
+                                     subtitle:  Text("${(listofDocumentSnapshot[index].data() as Map)['Email']}",
+                                       style:TextStyle(color: Colors.white, fontSize:18,)
+                                     ),
+                                     trailing: IconButton(icon: Icon(Icons.delete),
+                                     onPressed: () async{
+                                       await listofDocumentSnapshot[index].reference.delete();
+                                     },
+                                     ),
+                                   ),
+                                   color: Colors.blueGrey,
+                                 );
+                               },
+                             ),
+                           );
+                         }
+                         else{
+                            return Center(child: CircularProgressIndicator(),);
+                         }
+
+                       }
+
+                      }
+                      ),
                 ),
               ),
-              FloatingActionButton(
-                onPressed: (){
+              SizedBox(height: height4,),
+              SizedBox(
+                height: height2,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,20.0),
+                  child: Form(
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: nameController,
+                            decoration: InputDecoration(
+                              hintText: "Plaese enter your name"
+                            ),
+                          ),
+                          TextFormField(
+                            controller: passwordController,
+                            decoration: InputDecoration(
+                                hintText: "Plaese enter your password"
+                            ),
+                          ),
+                          TextFormField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                                hintText: "Plaese enter your email account"
+                            ),
+                          ),
 
-                  guncelle();
-                  },
-                tooltip: 'Update',
-                child: const Icon(Icons.update),
+                        ],
+                      )
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: height3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: FloatingActionButton(
+                        onPressed: (){
+
+                          guncelle();
+                          },
+                        tooltip: 'Update',
+                        child: const Icon(Icons.update),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: FloatingActionButton(
+                        onPressed: () async{
+                          Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
+                          await userRef.doc(nameController.text).set(usersData);
+                          nameController.text="";
+                          passwordController.text="";
+                          emailController.text="";
+
+                        },
+                        tooltip: 'Add',
+                        child: const Icon(Icons.add),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-          Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
-          await userRef.doc(nameController.text).set(usersData);
-
-          },
-        tooltip: 'Add',
-        child: const Icon(Icons.add),
       ),
 
     );

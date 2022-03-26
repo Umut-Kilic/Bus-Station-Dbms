@@ -180,6 +180,8 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                     child: ElevatedButton(
                       onPressed: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context) => KayitOl()));
+                        nameController.text="";
+                        passwordController.text="";
                       },
                       child: Text("Kayıt ol"),
                       style: ElevatedButton.styleFrom(
@@ -199,6 +201,8 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                         bool sonuc=await getDocumentData(nameController.text, passwordController.text);
                         if( sonuc){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
+                          nameController.text="";
+                          passwordController.text="";
                         }
                         else{
                           print("Yanlış aga");

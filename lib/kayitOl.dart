@@ -163,8 +163,13 @@ class _KayitOlState extends State<KayitOl> {
                     width: width1,
                     height: height4,
                     child: ElevatedButton(
-                      onPressed: (){
+                      onPressed: () async{
+                        Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
+                        await userRef.doc(nameController.text).set(usersData);
                         Navigator.pop(context);
+                        nameController.text="";
+                        passwordController.text="";
+                        emailController.text="";
                       },
                       child: Text("Kayıt ol",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                       style: ElevatedButton.styleFrom(
