@@ -61,9 +61,9 @@ class _AdminPanelState extends State<AdminPanel> {
     final width2 = MediaQuery.of(context).size.width;
     final width3 = MediaQuery.of(context).size.width;
     final width4 = MediaQuery.of(context).size.width;
-    final height1 = MediaQuery.of(context).size.height * 0.45;
+    final height1 = MediaQuery.of(context).size.height * 0.73;
     final height2 = MediaQuery.of(context).size.height * 0.25;
-    final height3 = MediaQuery.of(context).size.height * 0.12;
+    final height3 = MediaQuery.of(context).size.height * 0.15;
     final height4 = MediaQuery.of(context).size.height * 0.06;
     final height5 = MediaQuery.of(context).size.height * 0.35;
 
@@ -79,6 +79,7 @@ class _AdminPanelState extends State<AdminPanel> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin Paneli"),
+        backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -116,37 +117,12 @@ class _AdminPanelState extends State<AdminPanel> {
                                        subtitle:  Text("${(listofDocumentSnapshot[index].data() as Map)['Email']}",
                                          style:TextStyle(color: Colors.white, fontSize:18,)
                                        ),
-                                       /*trailing: IconButton(icon: Icon(Icons.delete),
-                                       onPressed: () async{
 
-                                         ScaffoldMessenger.of(context).showSnackBar(
 
-                                             SnackBar(
-                                               content: Text("Silmek istediğinizi emin misiniz ?",style: TextStyle(fontWeight: FontWeight.bold),),
-                                             backgroundColor: Colors.indigo,
-                                             duration: Duration(seconds: 4),
-                                             action: SnackBarAction(
-                                               label: "Evet",
-                                               textColor: Colors.white,
-                                               onPressed: () async{
-                                                 await listofDocumentSnapshot[index].reference.delete();
-                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                   SnackBar(
-                                                       content: Text("Veri başarıyla silindi",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                                     duration: Duration(seconds: 3),
-                                                     backgroundColor: Colors.green,
-                                                   ),
-                                                 );
-                                               },
-                                             ),)
-                                         );
-
-                                       },
-                                       ),*/
                                        trailing: Padding(
                                          padding: const EdgeInsets.all(0.0),
                                          child: PopupMenuButton(
-                                           child: Icon(Icons.open_in_new),
+                                           child: Icon(Icons.menu),
                                            itemBuilder: (context)=>[
                                              PopupMenuItem(
                                                value: 1,
@@ -170,6 +146,10 @@ class _AdminPanelState extends State<AdminPanel> {
                                                  ),
                                                ),
                                                onTap: () {
+                                                 nameController.text=(listofDocumentSnapshot[index].data() as Map)['Name'];
+                                                 emailController.text=(listofDocumentSnapshot[index].data() as Map)['Email'];
+                                                 passwordController.text=(listofDocumentSnapshot[index].data() as Map)['Password'];
+
                                                  Future.delayed(
                                                      const Duration(seconds: 0),
                                                          () => showDialog(
@@ -332,54 +312,12 @@ class _AdminPanelState extends State<AdminPanel> {
                         ),
                   ),
                 ),
-                SizedBox(height: height4,),
-                SizedBox(
-                  height: height2,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,20.0),
-                    child: Form(
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: nameController,
-                              decoration: InputDecoration(
-                                hintText: "Plaese enter your name"
-                              ),
-                            ),
-                            TextFormField(
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                  hintText: "Plaese enter your password"
-                              ),
-                            ),
-                            TextFormField(
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                  hintText: "Plaese enter your email account"
-                              ),
-                            ),
-
-                          ],
-                        )
-                    ),
-                  ),
-                ),
                 SizedBox(
                   height: height3,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: FloatingActionButton(
-                          onPressed: (){
 
-                            guncelle();
-                            },
-                          tooltip: 'Update',
-                          child: const Icon(Icons.update),
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: FloatingActionButton(
