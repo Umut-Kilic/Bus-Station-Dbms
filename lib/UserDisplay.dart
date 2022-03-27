@@ -1,6 +1,9 @@
 
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +53,19 @@ class UserDisplay extends StatefulWidget {
 }
 
 class _UserDisplayState extends State<UserDisplay> {
+
+  Completer<GoogleMapController> haritaKontrol=Completer();
+  
+  var baslangicKonum=CameraPosition(target: LatLng(38.7412482,26.1844276),zoom: 4,);
+
+  Future<void> konumaGit() async{
+    GoogleMapController controller= await haritaKontrol.future;
+    var gidilecekKonum=CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 8,);
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(gidilecekKonum));
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,15 +73,32 @@ class _UserDisplayState extends State<UserDisplay> {
         title: Text("Kullanıcı Ekranı"),
       ),
       body: Center(
-        child: Expanded(
-          child: Container(
-            child: Column(
-              children: [
-                Text("Kullanıcı Ekranı",style: TextStyle(color: Colors.purpleAccent),),
-              ],
-            ),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 400,
+                height: 300,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: baslangicKonum,
+                  onMapCreated: (GoogleMapController controller){
+                    haritaKontrol.complete(controller);
+
+                  },
+
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: (){
+                    konumaGit();
+
+                  },
+                  child: Text("İstanbul'a Git"),
+              )
+
+            ],
           ),
-        ),
+
       ),
     );
   }
