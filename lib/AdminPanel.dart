@@ -58,9 +58,7 @@ class _AdminPanelState extends State<AdminPanel> {
   Widget build(BuildContext context) {
 
     final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width2 = MediaQuery.of(context).size.width;
-    final width3 = MediaQuery.of(context).size.width;
-    final width4 = MediaQuery.of(context).size.width;
+
     final height1 = MediaQuery.of(context).size.height * 0.73;
     final height2 = MediaQuery.of(context).size.height * 0.25;
     final height3 = MediaQuery.of(context).size.height * 0.15;
@@ -68,14 +66,7 @@ class _AdminPanelState extends State<AdminPanel> {
     final height5 = MediaQuery.of(context).size.height * 0.35;
 
     CollectionReference userRef=_firestore.collection('Kisiler');
-    guncelle() async{
-      await userRef.doc(nameController.text).update({'Name':nameController.text});
-      await userRef.doc(nameController.text).update({'Password':passwordController.text});
-      await userRef.doc(nameController.text).update({'Email':emailController.text});
-      nameController.text="";
-      passwordController.text="";
-      emailController.text="";
-    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin Paneli"),
@@ -149,6 +140,7 @@ class _AdminPanelState extends State<AdminPanel> {
                                                  nameController.text=(listofDocumentSnapshot[index].data() as Map)['Name'];
                                                  emailController.text=(listofDocumentSnapshot[index].data() as Map)['Email'];
                                                  passwordController.text=(listofDocumentSnapshot[index].data() as Map)['Password'];
+
 
                                                  Future.delayed(
                                                      const Duration(seconds: 0),
@@ -242,16 +234,19 @@ class _AdminPanelState extends State<AdminPanel> {
                                                                  ),
                                                                ),
                                                                FlatButton(
-                                                                 child: Text("Kayıt et",style: TextStyle(color: Colors.white),),
-                                                                 onPressed: () async{
-                                                                   Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
-                                                                   await userRef.doc(nameController.text).set(usersData);
-                                                                   nameController.text="";
-                                                                   passwordController.text="";
-                                                                   emailController.text="";
+                                                                 child: Text("Güncelle",style: TextStyle(color: Colors.white),),
+                                                                 onPressed: () {
+                                                                   CollectionReference userRef=_firestore.collection('Kisiler');
+                                                                   setState(() async{
+                                                                     await userRef.doc(nameController.text).update({'Name':nameController.text});
+                                                                     await userRef.doc(nameController.text).update({'Password':passwordController.text});
+                                                                     await userRef.doc(nameController.text).update({'Email':emailController.text});
+                                                                     nameController.text="";
+                                                                     passwordController.text="";
+                                                                     emailController.text="";
 
-                                                                   Navigator.pop(context);
-
+                                                                     Navigator.pop(context);
+                                                                   });
 
                                                                  },
                                                                ),

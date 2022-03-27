@@ -35,9 +35,8 @@ class _AdminGirisState extends State<AdminGiris> {
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width2 = MediaQuery.of(context).size.width;
-    final width3 = MediaQuery.of(context).size.width;
     final width4 = MediaQuery.of(context).size.width;
+
     final height1 = MediaQuery.of(context).size.height * 0.1;
     final height2 = MediaQuery.of(context).size.height * 0.15;
     final height3 = MediaQuery.of(context).size.height * 0.05;
