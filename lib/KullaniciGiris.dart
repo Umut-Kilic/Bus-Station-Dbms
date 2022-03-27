@@ -198,17 +198,33 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                     height: height4,
                     child: ElevatedButton(
                       onPressed: () async{
-                        bool sonuc=await getDocumentData(nameController.text, passwordController.text);
-                        if( sonuc){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
-                          nameController.text="";
-                          passwordController.text="";
+
+                        if(nameController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else if(passwordController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
                         }
                         else{
-                          print("Yanlış aga");
+                          bool sonuc=await getDocumentData(nameController.text, passwordController.text);
+                          if( sonuc){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
+                            nameController.text="";
+                            passwordController.text="";
+                          }
+                          else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                            );
 
-                          //TODO
+                          }
                         }
+
+
 
                       },
                       child: Text("Giriş Yap"),

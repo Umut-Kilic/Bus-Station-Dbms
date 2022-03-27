@@ -164,12 +164,35 @@ class _KayitOlState extends State<KayitOl> {
                     height: height4,
                     child: ElevatedButton(
                       onPressed: () async{
-                        Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
-                        await userRef.doc(nameController.text).set(usersData);
-                        Navigator.pop(context);
-                        nameController.text="";
-                        passwordController.text="";
-                        emailController.text="";
+                        if(nameController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else if(emailController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen email alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else if(!emailController.text.contains('@')){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen geçerli email adresi giriniz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else if(passwordController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else{
+                          Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
+                          await userRef.doc(nameController.text).set(usersData);
+                          Navigator.pop(context);
+                          nameController.text="";
+                          passwordController.text="";
+                          emailController.text="";
+                        }
+                        
                       },
                       child: Text("Kayıt ol",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                       style: ElevatedButton.styleFrom(

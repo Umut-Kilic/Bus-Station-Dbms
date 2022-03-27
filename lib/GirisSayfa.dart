@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/AdminGiris.dart';
 import 'package:yazlab2_proje2/KullaniciGiris.dart';
-import 'package:yazlab2_proje2/main.dart';
+import 'package:yazlab2_proje2/AdminPanel.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

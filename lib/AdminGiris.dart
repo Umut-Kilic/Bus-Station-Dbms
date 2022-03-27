@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yazlab2_proje2/main.dart';
+import 'package:yazlab2_proje2/AdminPanel.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -110,14 +110,30 @@ class _AdminGirisState extends State<AdminGiris> {
                     height: height4,
                     child: ElevatedButton(
                       onPressed: (){
-                        if(nameController.text==adminU && passwordController.text==adminP){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-                          nameController.text="";
-                          passwordController.text="";
+
+                        if(nameController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                        else if(passwordController.text==""){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
                         }
                         else{
-
+                          if(nameController.text==adminU && passwordController.text==adminP){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
+                            nameController.text="";
+                            passwordController.text="";
+                          }
+                          else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                            );
+                          }
                         }
+
                       },
                       child: Text("Giriş Yap"),
                       style: ElevatedButton.styleFrom(
