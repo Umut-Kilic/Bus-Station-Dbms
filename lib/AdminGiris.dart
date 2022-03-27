@@ -49,102 +49,104 @@ class _AdminGirisState extends State<AdminGiris> {
         ),
         body: Center(
           child: Flexible(
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(width: width1, height: height2),
-                  SizedBox(
-                    height: height2,
-                    width: width1,
-                    child: TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.blueGrey,
-                        labelText: "Username",
-                        labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                        hintText: "Please enter your admin username",
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: new BorderSide(color: Colors.black),
-                          borderRadius: new BorderRadius.circular(25.7),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              new BorderSide(color: Colors.green, width: 3.0),
-                          borderRadius: new BorderRadius.circular(25.7),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height2,
-                    width: width1,
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.blueGrey,
-                        labelText: "Password",
-                        labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                        hintText: "Please enter your admin password",
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: new BorderSide(color: Colors.black),
-                          borderRadius: new BorderRadius.circular(25.7),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                          new BorderSide(color: Colors.green, width: 3.0),
-                          borderRadius: new BorderRadius.circular(25.7),
+            child: SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: width1, height: height2),
+                    SizedBox(
+                      height: height2,
+                      width: width1,
+                      child: TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.blueGrey,
+                          labelText: "Username",
+                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
+                          hintText: "Please enter your admin username",
+                          hintStyle: TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: new BorderSide(color: Colors.black),
+                            borderRadius: new BorderRadius.circular(25.7),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                new BorderSide(color: Colors.green, width: 3.0),
+                            borderRadius: new BorderRadius.circular(25.7),
+                          ),
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: height2,
+                      width: width1,
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.blueGrey,
+                          labelText: "Password",
+                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
+                          hintText: "Please enter your admin password",
+                          hintStyle: TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: new BorderSide(color: Colors.black),
+                            borderRadius: new BorderRadius.circular(25.7),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                            new BorderSide(color: Colors.green, width: 3.0),
+                            borderRadius: new BorderRadius.circular(25.7),
+                          ),
+                        ),
+                      ),
 
-                  ),
-                  SizedBox(width: width1, height: height3),
-                  SizedBox(
-                    width: width1,
-                    height: height4,
-                    child: ElevatedButton(
-                      onPressed: (){
+                    ),
+                    SizedBox(width: width1, height: height3),
+                    SizedBox(
+                      width: width1,
+                      height: height4,
+                      child: ElevatedButton(
+                        onPressed: (){
 
-                        if(nameController.text==""){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                          );
-                        }
-                        else if(passwordController.text==""){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                          );
-                        }
-                        else{
-                          if(nameController.text==adminU && passwordController.text==adminP){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-                            nameController.text="";
-                            passwordController.text="";
-                          }
-                          else{
+                          if(nameController.text==""){
                             ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
                             );
                           }
-                        }
+                          else if(passwordController.text==""){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                            );
+                          }
+                          else{
+                            if(nameController.text==adminU && passwordController.text==adminP){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
+                              nameController.text="";
+                              passwordController.text="";
+                            }
+                            else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                              );
+                            }
+                          }
 
-                      },
-                      child: Text("Giriş Yap"),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30.0),
-                          )
+                        },
+                        child: Text("Giriş Yap"),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0),
+                            )
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
