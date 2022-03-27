@@ -54,13 +54,38 @@ class UserDisplay extends StatefulWidget {
 
 class _UserDisplayState extends State<UserDisplay> {
 
-  Completer<GoogleMapController> haritaKontrol=Completer();
-  
-  var baslangicKonum=CameraPosition(target: LatLng(38.7412482,26.1844276),zoom: 4,);
+  late BitmapDescriptor konumIcon;
 
-  Future<void> konumaGit() async{
-    GoogleMapController controller= await haritaKontrol.future;
-    var gidilecekKonum=CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 8,);
+  Completer<GoogleMapController> haritaKontrol = Completer();
+
+  var baslangicKonum = CameraPosition(target: LatLng(38.7412482,26.1844276),zoom: 4,);
+
+  List<Marker> isaretler = <Marker>[];
+
+  iconOlustur(context){
+    ImageConfiguration configuration = createLocalImageConfiguration(context);
+    BitmapDescriptor.fromAssetImage(configuration, "resimler/konum_resim.png").then((icon) {
+      setState(() {
+        konumIcon = icon;
+      });
+    });
+  }
+
+  Future<void> konumaGit() async {
+    GoogleMapController controller = await haritaKontrol.future;
+
+    var gidilecekIsaret = Marker(
+      markerId: MarkerId("Id"),
+      position: LatLng(41.0039643,28.4517462),
+      infoWindow: InfoWindow(title: "İstanbul",snippet: "Evim"),
+      icon: konumIcon,
+    );
+
+    setState(() {
+      isaretler.add(gidilecekIsaret);
+    });
+
+    var gidilecekKonum = CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 8,);
 
     controller.animateCamera(CameraUpdate.newCameraPosition(gidilecekKonum));
 
@@ -68,38 +93,36 @@ class _UserDisplayState extends State<UserDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    iconOlustur(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Kullanıcı Ekranı"),
       ),
       body: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                width: 400,
-                height: 300,
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: baslangicKonum,
-                  onMapCreated: (GoogleMapController controller){
-                    haritaKontrol.complete(controller);
-
-                  },
-
-                ),
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              width: 400,
+              height: 300,
+              child: GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: baslangicKonum,
+                markers: Set<Marker>.of(isaretler),
+                onMapCreated: (GoogleMapController controller){
+                  haritaKontrol.complete(controller);
+                },
               ),
-              ElevatedButton(
-                  onPressed: (){
-                    konumaGit();
-
-                  },
-                  child: Text("İstanbul'a Git"),
-              )
-
-            ],
-          ),
-
+            ),
+            RaisedButton(
+              child: Text("Konuma Git"),
+              onPressed: (){
+                konumaGit();
+              },
+            ),
+          ],
+        ),
       ),
+
     );
   }
 }
