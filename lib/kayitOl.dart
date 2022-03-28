@@ -61,154 +61,156 @@ class _KayitOlState extends State<KayitOl> {
   @override
   Widget build(BuildContext context) {
 
-    final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width2 = MediaQuery.of(context).size.width;
-
-    final height1 = MediaQuery.of(context).size.height * 0.1;
-    final height2 = MediaQuery.of(context).size.height * 0.15;
-    final height3 = MediaQuery.of(context).size.height * 0.05;
-    final height4 = MediaQuery.of(context).size.height * 0.07;
-
     CollectionReference userRef=_firestore.collection('Kisiler');
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Kullanıcı Kayıt Sayfası"),
-        ),
-        body: Center(
-          child: Flexible(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        brightness: Brightness.light,
+        backgroundColor: Colors.white,
+        leading:
+        IconButton( onPressed: (){
+          Navigator.pop(context);
+        },icon:Icon(Icons.arrow_back_ios,size: 20,color: Colors.black,)),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
                   children: [
-                    SizedBox(width: width1, height: height1),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Username",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin username",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text ("Hoş Geldin", style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),),
+                        SizedBox(height: 20,),
+                        Text("Buradan sisteme Kayıt olabilirsin",style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey[700],
+                        ),),
+                        SizedBox(height: 30,)
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 40
+                      ),
+                      child: Column(
+                        children: [
+                          ozelTextField(icon:Icons.supervised_user_circle,tftctr:nameController,hintText: "Kullanıcı Adınız",label: "Kullanıcı Adı"),
+                          ozelTextField(icon:Icons.email,tftctr:emailController,hintText: "Email",label: "Email"),
+                          ozelTextField(icon:Icons.password,tftctr:passwordController,hintText: "Şifre",label: "Şifre",obsureText: true)
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: emailController,
-                        keyboardType:TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Email",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your Email adress",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Password",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin password",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
-                      ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: Container(
+                        padding: EdgeInsets.only(top: 3,left: 3),
 
-                    ),
-                    SizedBox(width: width1, height: height3),
-                    SizedBox(
-                      width: width1,
-                      height: height4,
-                      child: ElevatedButton(
-                        onPressed: () async{
-                          if(nameController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else if(emailController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen email alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else if(!emailController.text.contains('@')){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen geçerli email adresi giriniz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else if(passwordController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else{
-                            Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
-                            await userRef.doc(nameController.text).set(usersData);
-                            Navigator.pop(context);
-                            nameController.text="";
-                            passwordController.text="";
-                            emailController.text="";
-                          }
-                          
-                        },
-                        child: Text("Kayıt ol",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.orange,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )
+                        child:  FlatButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(36),
+                          ),
+                          color: Colors.redAccent,
+                          onPressed: () async{
+                            if(nameController.text==""){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                              );
+                            }
+                            else if(emailController.text==""){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(backgroundColor: Colors.white,content: Text("Lütfen email alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                              );
+                            }
+                            else if(!emailController.text.contains('@')){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(backgroundColor: Colors.white,content: Text("Lütfen geçerli email adresi giriniz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                              );
+                            }
+                            else if(passwordController.text==""){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                              );
+                            }
+                            else{
+                              Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};
+                              await userRef.doc(nameController.text).set(usersData);
+                              Navigator.pop(context);
+                              nameController.text="";
+                              passwordController.text="";
+                              emailController.text="";
+                            }
+
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Kayıt Ol',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
 
                   ],
+
                 ),
-              ),
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
+
+
+Widget ozelTextField({icon,tftctr,hintText,label,obsureText = false,}){
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label,style:TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87
+      ),),
+      SizedBox(height: 5,),
+      TextField(
+        controller: tftctr,
+        obscureText: obsureText,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon),
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey)
+          ),
+        ),
+      ),
+      SizedBox(height: 30,)
+
+    ],
+  );
+}
+
+

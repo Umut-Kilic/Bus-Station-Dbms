@@ -1,7 +1,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:yazlab2_proje2/GirisSayfa.dart';
 import 'package:yazlab2_proje2/UserDisplay.dart';
 import 'package:yazlab2_proje2/kayitOl.dart';
 
@@ -59,14 +61,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  /*Future<void> getData() async {
-    QuerySnapshot querySnapshot = await _firestore.collection("collection").getDocuments();
-    var list = querySnapshot.documents;
-    for (int i = 0; i < querySnapshot.documents.length; i++) {
-      var a = querySnapshot.documents[i];
-      print(a.documentID);
-    }
-  }*/
+
 
   getDocumentData(ad,sifre) async{
     CollectionReference userRef=_firestore.collection('Kisiler');
@@ -105,143 +100,207 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
     final width2 = MediaQuery.of(context).size.width;
     final width3 = MediaQuery.of(context).size.width;
     final width4 = MediaQuery.of(context).size.width;
-    final height1 = MediaQuery.of(context).size.height * 0.1;
+    final height1 = MediaQuery.of(context).size.height * 0.20;
     final height2 = MediaQuery.of(context).size.height * 0.15;
     final height3 = MediaQuery.of(context).size.height * 0.05;
     final height4 = MediaQuery.of(context).size.height * 0.07;
 
     CollectionReference userRef=_firestore.collection('Kisiler');
 
+    Color mBackgroundColor = Color(0xFFFFFFFF);
+
+    Color mPrimaryColor = Color(0xFFB98068);
+
+    Color mPrimaryTextColor = Color(0xFF8C746A);
+
+
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("Kullanıcı Giriş Sayfası"),
+          backgroundColor: mBackgroundColor,
+          title: Text("Kullanıcı Giriş Sayfası",style: TextStyle(color: mPrimaryTextColor),),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,color: mPrimaryTextColor,),
+            onPressed: () {
+              Navigator.push(context,  MaterialPageRoute(builder: (context) => GirisSayfasi()));
+            },
+
+          ),
         ),
-        body: Center(
-          child: Flexible(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: width1, height: height1),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Username",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin username",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top:25.0),
+                  child: SizedBox(
+                    height: height1,
+                    child: FittedBox(
+                        child:Image.asset("resimler/login.png"),
+                      fit: BoxFit.fill,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Password",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin password",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
-                      ),
-
-                    ),
-                    SizedBox(width: width1, height: height3),
-                    SizedBox(
-                      width: width1,
-                      height: height4,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => KayitOl()));
-                          nameController.text="";
-                          passwordController.text="";
-                        },
-                        child: Text("Kayıt ol"),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.orange,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: width1, height: height3),
-                    SizedBox(
-                      width: width1,
-                      height: height4,
-                      child: ElevatedButton(
-                        onPressed: () async{
-
-                          if(nameController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else if(passwordController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else{
-                            bool sonuc=await getDocumentData(nameController.text, passwordController.text);
-                            if( sonuc){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
-                              nameController.text="";
-                              passwordController.text="";
-                            }
-                            else{
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                              );
-
-                            }
-                          }
-
-
-
-                        },
-                        child: Text("Giriş Yap"),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.green,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(top:15.0,left: 20,right: 20),
+                child: Text(
+                  'Tekrardan Hoş Geldin!',
+                  style: TextStyle(
+                    color: mPrimaryTextColor,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+      Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 20,
+            horizontal: 30,
           ),
-        ));
+          child: Column(
+            children: <Widget>[
+              TextField(
+                cursorColor: Colors.grey,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.supervised_user_circle),
+                  labelText: 'Kullanıcı Adınız',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: mPrimaryColor,
+                        width: 2,
+                      )),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: mPrimaryColor,
+                        width: 2,
+                      )),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 0.5,
+                      )),
+                ),
+              ),
+              SizedBox(height: 16,),
+              TextField(
+                cursorColor: Colors.grey,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.password),
+                  labelText: 'Şifre',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: mPrimaryColor,
+                        width: 2,
+                      )),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: mPrimaryColor,
+                        width: 2,
+                      )),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 0.5,
+                      )),
+                ),
+              ),
+
+            ],
+          ),
+      ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Şifreni mi unuttun?',
+                  style: TextStyle(color: mPrimaryColor),
+                ),
+              ),
+              SizedBox(
+                height: 60,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(36),
+                  ),
+                  color: mPrimaryColor,
+                  onPressed: () async{
+                    if(nameController.text==""){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                      );
+                    }
+                    else if(passwordController.text==""){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                      );
+                    }
+                    else{
+                      bool sonuc=await getDocumentData(nameController.text, passwordController.text);
+                      if( sonuc){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserDisplay()));
+                        nameController.text="";
+                        passwordController.text="";
+                      }
+                      else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                        );
+
+                      }
+                    }
+
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Giriş Yap',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 16,
+                ),
+                alignment: Alignment.center,
+                child: RichText(
+                  text: TextSpan(style: TextStyle(color: Colors.grey), children: [
+                    TextSpan(text: 'Hesabın Yok mu? '),
+                    TextSpan(
+                      text: 'Kayıt Ol',
+                      style: TextStyle(
+                        color: mPrimaryColor,
+                      ),
+                      recognizer: new TapGestureRecognizer()..onTap = () {
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => KayitOl()));
+                        nameController.text="";
+                        passwordController.text="";
+                      },
+                    ),
+                  ]),
+                ),
+              )
+            ],
+          ),
+        ),
+    );
+
+
+
   }
 }

@@ -38,7 +38,7 @@ class _AdminGirisState extends State<AdminGiris> {
     final width4 = MediaQuery.of(context).size.width;
 
     final height1 = MediaQuery.of(context).size.height * 0.1;
-    final height2 = MediaQuery.of(context).size.height * 0.15;
+    final height2 = MediaQuery.of(context).size.height * 0.25;
     final height3 = MediaQuery.of(context).size.height * 0.05;
     final height4 = MediaQuery.of(context).size.height * 0.07;
 
@@ -47,108 +47,106 @@ class _AdminGirisState extends State<AdminGiris> {
           title: Text("Admin Giriş Sayfası"),
         ),
         body: Center(
-          child: Flexible(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: width1, height: height2),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Username",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin username",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
-                      ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom:25.0),
+                  child: SizedBox(
+                    height: height2,
+                    child: FittedBox(
+                      child:Image.asset("resimler/admin1.png"),
+                      fit: BoxFit.fill,
                     ),
-                    SizedBox(
-                      height: height2,
-                      width: width1,
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.blueGrey,
-                          labelText: "Password",
-                          labelStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
-                          hintText: "Please enter your admin password",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.black),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                            new BorderSide(color: Colors.green, width: 3.0),
-                            borderRadius: new BorderRadius.circular(25.7),
-                          ),
-                        ),
-                      ),
-
-                    ),
-                    SizedBox(width: width1, height: height3),
-                    SizedBox(
-                      width: width1,
-                      height: height4,
-                      child: ElevatedButton(
-                        onPressed: (){
-
-                          if(nameController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else if(passwordController.text==""){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                            );
-                          }
-                          else{
-                            if(nameController.text==adminU && passwordController.text==adminP){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
-                              nameController.text="";
-                              passwordController.text="";
-                            }
-                            else{
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                              );
-                            }
-                          }
-
-                        },
-                        child: Text("Giriş Yap"),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
-                            )
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              ),
+                Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 40
+                    ),
+                child:Column(
+                  children: [
+                    ozelTextField(icon:Icons.supervised_user_circle,tftctr:nameController,hintText: "Kullanıcı Adınız",label: "Kullanıcı Adı"),
+                    ozelTextField(icon:Icons.password,tftctr:passwordController,hintText: "Şifre",label: "Şifre",obsureText: true),
+                  ],
+                )
+                ),
+                SizedBox(
+                  width: width1,
+                  height: height4,
+                  child: ElevatedButton(
+                    onPressed: (){
+
+                      if(nameController.text==""){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                        );
+                      }
+                      else if(passwordController.text==""){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                        );
+                      }
+                      else{
+                        if(nameController.text==adminU && passwordController.text==adminP){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
+                          nameController.text="";
+                          passwordController.text="";
+                        }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
+                          );
+                        }
+                      }
+
+                    },
+                    child: Text("Giriş Yap"),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        )
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ));
   }
+}
+
+
+Widget ozelTextField({icon,tftctr,hintText,label,obsureText = false,}){
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label,style:TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87
+      ),),
+      SizedBox(height: 5,),
+      TextField(
+        controller: tftctr,
+        obscureText: obsureText,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon),
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey)
+          ),
+        ),
+      ),
+      SizedBox(height: 30,)
+
+    ],
+  );
 }
