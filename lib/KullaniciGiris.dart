@@ -123,7 +123,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back,color: mPrimaryTextColor,),
             onPressed: () {
-              Navigator.push(context,  MaterialPageRoute(builder: (context) => GirisSayfasi()));
+              Navigator.push(context,  MaterialPageRoute(builder: (context) => AdminUserSayfasi()));
             },
 
           ),

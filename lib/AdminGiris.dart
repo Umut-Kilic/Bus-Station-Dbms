@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:yazlab2_proje2/AdminPanel.dart';
+import 'package:yazlab2_proje2/AdminHome.dart';
+import 'package:yazlab2_proje2/AdminPanelUser.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,7 +90,7 @@ class _AdminGirisState extends State<AdminGiris> {
                       }
                       else{
                         if(nameController.text==adminU && passwordController.text==adminP){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Admin()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
                           nameController.text="";
                           passwordController.text="";
                         }
