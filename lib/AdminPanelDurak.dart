@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-void main() {
+void main()  async{
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(AdminDurak());
 }
 
@@ -27,7 +29,7 @@ class AdminDurak extends StatelessWidget {
             future: _initialization,
             builder: (context,snapshot){
               if(snapshot.hasError){
-                return Center(child: Text("Beklenmeyen bir haa ortaya çıktı"));
+                return Center(child: Text("Beklenmeyen bir hata ortaya çıktı"));
               }
               else if(snapshot.hasData){
                 return AdminPanelDurak();
@@ -50,6 +52,8 @@ class AdminPanelDurak extends StatefulWidget {
 }
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
+
+  final _firestore=FirebaseFirestore.instance;
 
 
   late BitmapDescriptor konumIcon;
@@ -91,8 +95,17 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   }
 
+  TextEditingController nameController=TextEditingController();
+  TextEditingController passwordController=TextEditingController();
+  TextEditingController emailController=TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+
+    final width1 = MediaQuery.of(context).size.width * 0.30;
+
+    final height1 = MediaQuery.of(context).size.height * 0.36;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin Durak İşlemleri"),
@@ -121,9 +134,104 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
             ),
             ElevatedButton(
                 onPressed: (){
+                  Future.delayed(
+                      const Duration(seconds: 0),
+                          () => showDialog(
+                          context: context,
+                          builder: (context) => SingleChildScrollView(
+                            child: Container(
+                              child: AlertDialog(
+                                title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                backgroundColor: Colors.orangeAccent,
+                                content: SizedBox(
+                                  height: height1,
+                                  width: width1,
+                                  child: Column(
+                                    children: [
+                                      Theme(
+                                          data:Theme.of(context).copyWith(
+                                            colorScheme: ThemeData().colorScheme.copyWith(
+                                              primary:Colors.white,
+                                            ),
+                                          ),
+                                          child: ozelTextField(color:Colors.indigo,icon:Icons.supervised_user_circle,tftctr:nameController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+                                      ),
+                                      Theme(
+                                          data:Theme.of(context).copyWith(
+                                            colorScheme: ThemeData().colorScheme.copyWith(
+                                              primary:Colors.white,
+                                            ),
+                                          ),
+                                          child: ozelTextField(color:Colors.tealAccent,icon:Icons.email,tftctr:emailController,hintText: "Lat",label: "Lat:")
+                                      ),
+                                      Theme(
+                                          data:Theme.of(context).copyWith(
+                                            colorScheme: ThemeData().colorScheme.copyWith(
+                                              primary:Colors.white,
+                                            ),
+                                          ),
+                                          child: ozelTextField(color:Colors.redAccent,icon:Icons.password,tftctr:passwordController,hintText: "Lng",label: "Lng:")
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: FlatButton(
+                                      child: Text("İptal",style: TextStyle(color: Colors.white),),
 
+                                      onPressed: (){
+                                        nameController.text="";
+                                        emailController.text="";
+                                        passwordController.text="";
+                                        Navigator.pop(context);
+
+                                      },
+
+                                    ),
+                                  ),
+                                  FlatButton(
+                                    child: Text("Güncelle",style: TextStyle(color: Colors.white),),
+                                    onPressed: () {
+                                      /*CollectionReference userRef=_firestore.collection('Kisiler');
+                                      setState(() async{
+                                        await userRef.doc(nameController.text).update({'Name':nameController.text});
+                                        await userRef.doc(nameController.text).update({'Password':passwordController.text});
+                                        await userRef.doc(nameController.text).update({'Email':emailController.text});
+                                        nameController.text="";
+                                        passwordController.text="";
+                                        emailController.text="";
+
+                                        Navigator.pop(context);
+                                      });*/
+
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                      ));
                 },
-                child: Text("Durak Ekle")
+                child: SizedBox(
+                  width: width1,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.bus_alert,
+                            color:Colors.white
+                      ),
+                      SizedBox(width: 10,),
+                      Text("Durak Ekle"),
+                    ],
+                  ),
+                ),
+              style: ElevatedButton.styleFrom(
+
+              ),
             ),
           ],
         ),
@@ -131,4 +239,42 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
     );
   }
+}
+
+
+
+Widget ozelTextField({color,icon,tftctr,hintText,label,obsureText = false,}){
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label,style:TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87
+      ),),
+      SizedBox(height: 5,),
+      TextField(
+        controller: tftctr,
+        obscureText: obsureText,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: color,
+          prefixIcon: Icon(icon),
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey)
+          ),
+        ),
+      ),
+      SizedBox(height: 10,)
+
+    ],
+  );
 }
