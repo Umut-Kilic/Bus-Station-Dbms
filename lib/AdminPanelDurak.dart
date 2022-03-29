@@ -50,11 +50,10 @@ class AdminPanelDurak extends StatefulWidget {
   State<AdminPanelDurak> createState() => _AdminPanelDurakState();
 }
 
+
+
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
-
-  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
   final _firestore=FirebaseFirestore.instance;
-
 
   late BitmapDescriptor konumIcon;
 
@@ -99,6 +98,20 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   TextEditingController latController=TextEditingController();
   TextEditingController lngController=TextEditingController();
   TextEditingController person_count_Controller=TextEditingController();
+
+
+  Future<void> durakEkle(durakRef) async {
+    Map<String,dynamic> stationData={'Isım':stationController.text,'lat':latController.text,'lng':lngController.text,'Kisi Sayısı':person_count_Controller.text};
+    await durakRef.doc(stationController.text).set(stationData);
+
+  }
+
+  Future<void> durakGuncelle(durakRef) async {
+    await durakRef.doc(stationController.text).update({'Isım':stationController.text});
+    await durakRef.doc(stationController.text).update({'lat':latController.text});
+    await durakRef.doc(stationController.text).update({'lng':lngController.text});
+    await durakRef.doc(stationController.text).update({'Kisi Sayısı':person_count_Controller.text});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -216,19 +229,19 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                         ),
                                       ),
                                       TextButton(
-                                        child: Text("Güncelle",style: TextStyle(color: Colors.white),),
+                                        child: Text("Durak Ekle",style: TextStyle(color: Colors.white),),
                                         onPressed: () {
-                                          CollectionReference durakRef=_firestore.collection('Duraklar');
+
                                           setState(() async{
-                                            await durakRef.doc(stationController.text).update({'Isım':stationController.text});
-                                            await durakRef.doc(stationController.text).update({'lat':latController.text});
-                                            await durakRef.doc(stationController.text).update({'lng':lngController.text});
-                                            await durakRef.doc(stationController.text).update({'Kisi Sayısı':person_count_Controller.text});
+                                            CollectionReference durakRef=_firestore.collection('Duraklar');
+
+                                            durakEkle(durakRef);
 
                                             stationController.text="";
                                             latController.text="";
                                             lngController.text="";
                                             person_count_Controller.text="";
+
 
                                             Navigator.pop(context);
                                           });
