@@ -52,6 +52,8 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
 
 
+
+
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.37;
