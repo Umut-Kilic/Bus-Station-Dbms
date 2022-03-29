@@ -190,7 +190,7 @@ class _AdminPanelState extends State<AdminPanel> {
                                                                actions: [
                                                                  Padding(
                                                                    padding: const EdgeInsets.all(0.0),
-                                                                   child: FlatButton(
+                                                                   child: TextButton(
                                                                      child: Text("İptal",style: TextStyle(color: Colors.white),),
 
                                                                      onPressed: (){
@@ -203,7 +203,7 @@ class _AdminPanelState extends State<AdminPanel> {
 
                                                                    ),
                                                                  ),
-                                                                 FlatButton(
+                                                                 TextButton(
                                                                    child: Text("Güncelle",style: TextStyle(color: Colors.white),),
                                                                    onPressed: () {
                                                                      CollectionReference userRef=_firestore.collection('Kisiler');
@@ -333,7 +333,7 @@ class _AdminPanelState extends State<AdminPanel> {
                                         actions: [
                                           Padding(
                                             padding: const EdgeInsets.all(0.0),
-                                            child: FlatButton(
+                                            child: TextButton(
                                               child: Text("İptal",style: TextStyle(color: Colors.white),),
 
                                               onPressed: (){
@@ -343,7 +343,7 @@ class _AdminPanelState extends State<AdminPanel> {
 
                                             ),
                                           ),
-                                          FlatButton(
+                                          TextButton(
                                             child: Text("Kayıt et",style: TextStyle(color: Colors.white),),
                                             onPressed: () async{
                                               Map<String,dynamic> usersData={'Name':nameController.text,'Password':passwordController.text,'Email':emailController.text};

@@ -201,7 +201,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                     actions: [
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
-                                        child: FlatButton(
+                                        child: TextButton(
                                           child: Text("İptal",style: TextStyle(color: Colors.white),),
 
                                           onPressed: (){
@@ -215,7 +215,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
                                         ),
                                       ),
-                                      FlatButton(
+                                      TextButton(
                                         child: Text("Güncelle",style: TextStyle(color: Colors.white),),
                                         onPressed: () {
                                           CollectionReference durakRef=_firestore.collection('Duraklar');
