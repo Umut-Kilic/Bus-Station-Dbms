@@ -16,9 +16,9 @@ class AdminDurak extends StatelessWidget {
 
   final Future<FirebaseApp> _initialization=Firebase.initializeApp();
 
-
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -55,9 +55,6 @@ class AdminPanelDurak extends StatefulWidget {
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
-
-  final _firestore=FirebaseFirestore.instance;
-
   late BitmapDescriptor konumIcon;
 
   Completer<GoogleMapController> haritaKontrol = Completer();
@@ -80,20 +77,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Future<void> konumaGit() async {
     GoogleMapController controller = await haritaKontrol.future;
 
-    var gidilecekIsaret = Marker(
-      markerId: MarkerId("Id"),
-      position: LatLng(41.0039643,28.4517462),
-      infoWindow: InfoWindow(title: "İstanbul",snippet: "Evim"),
-      //icon: konumIcon,
-    );
-
-    setState(() {
-      isaretler.add(gidilecekIsaret);
-    });
-
-
-
-    controller.animateCamera(CameraUpdate.newCameraPosition(gidilecekKonum));
 
   }
 
@@ -254,6 +237,10 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                       TextButton(
                                         child: Text("Durak Ekle",style: TextStyle(color: Colors.white),),
                                         onPressed: () async {
+
+                                          final Future<FirebaseApp> _initialization=Firebase.initializeApp();
+                                            print("zaaaaaaaaaaaaaaaaaaaaaaaaa");
+                                          final _firestore=FirebaseFirestore.instance;
                                           CollectionReference durakRef=_firestore.collection('Duraklar');
 
                                           getBusStation(durakRef);
