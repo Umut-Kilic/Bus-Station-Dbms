@@ -147,6 +147,8 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Future<void> durakEkle(durakRef) async {
     Map<String,dynamic> stationData={'Isim':stationController.text,'lat':latController.text,'lng':lngController.text,'KisiSayisi':person_count_Controller.text};
     await durakRef.doc(stationController.text).set(stationData);
+    Navigator.pop(context);  // pop current page
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
 
   }
 
