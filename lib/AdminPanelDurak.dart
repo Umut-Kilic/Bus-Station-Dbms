@@ -59,6 +59,7 @@ class AdminPanelDurak extends StatefulWidget {
 
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
+  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
 
 
   late BitmapDescriptor konumIcon;
@@ -99,13 +100,40 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     }
 
 
+
     for(int i=0;i<liste.length;i++){
-      print("İsim: ${liste[i]['Isim']}   Lat : ${liste[i]['lat']}  Lng: ${liste[i]['lng']} Kişi sayısı : ${liste[i]['KisiSayisi']}");
       listLat.add(liste[i]['lat']);
       listLng.add(liste[i]['lng']);
 
+
     }
   }
+
+
+  List<Marker> _createMarker (){
+    var array= <Marker>[];
+    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    print(listLat[2]);
+
+    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+    for( var i = 0 ; i <= listLat.length-1; i++ ) {
+
+      ;
+
+        var x=Marker(
+        markerId: MarkerId("asdsa"),
+        position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
+      );
+      array.add(x);
+    }
+
+    return array;
+  }
+
+
+
+
 
 
 
@@ -161,8 +189,10 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                         child: GoogleMap(
                           mapType: MapType.normal,
                           initialCameraPosition: baslangicKonum,
-                          markers: Set<Marker>.of(isaretler),
-                          onMapCreated: (GoogleMapController controller){
+                          markers:  Set<Marker>.of( _createMarker()),
+
+
+                  onMapCreated: (GoogleMapController controller){
                             haritaKontrol.complete(controller);
                           },
                         ),
@@ -257,7 +287,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                             TextButton(
                                               child: Text("Durak Ekle",style: TextStyle(color: Colors.white),),
                                               onPressed: () async {
-                                                print("zaaaaaaaaaaaaaaaaaaaaaaaaa");
 
                                                 setState(() async{
 
