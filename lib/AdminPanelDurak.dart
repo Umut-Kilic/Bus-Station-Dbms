@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'AdminDurakIslemleri.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(AdminDurak());
@@ -59,11 +61,11 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   Completer<GoogleMapController> haritaKontrol = Completer();
 
-  var baslangicKonum = CameraPosition(target: LatLng(38.7412482,26.1844276),zoom: 4,);
+  var baslangicKonum = CameraPosition(target: LatLng(40.766666,29.916668),zoom: 8,);
 
   List<Marker> isaretler = <Marker>[];
 
-  var gidilecekKonum = CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 8,);
+  var gidilecekKonum = CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 10,);
 
   /*iconOlustur(context){
     ImageConfiguration configuration = createLocalImageConfiguration(context);
@@ -129,6 +131,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     final width1 = MediaQuery.of(context).size.width * 0.37;
 
     final height1 = MediaQuery.of(context).size.height * 0.50;
+    final height2 = MediaQuery.of(context).size.height * 0.60;
 
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +144,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
             children: <Widget>[
               SizedBox(
                 width: 400,
-                height: 300,
+                height: height2,
                 child: GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: baslangicKonum,
@@ -291,6 +294,15 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                 style: ElevatedButton.styleFrom(
 
                 ),
+              ),
+              ElevatedButton(
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDurakIslemleri()));
+
+
+
+              },
+                  child: Text("Durak Listele",style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
