@@ -259,14 +259,9 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                               onPressed: () async {
                                                 print("zaaaaaaaaaaaaaaaaaaaaaaaaa");
 
-                                                getBusStation(durakRef);
-
                                                 setState(() async{
 
                                                   durakEkle(durakRef);
-
-
-
 
                                                   stationController.text="";
                                                   latController.text="";
