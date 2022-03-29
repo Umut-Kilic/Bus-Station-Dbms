@@ -71,7 +71,8 @@ class _AdminPanelState extends State<AdminPanel> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Admin Paneli"),
+        title: Text("Admin Kullanıcı İşlemleri"),
+        centerTitle: true,
         backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(

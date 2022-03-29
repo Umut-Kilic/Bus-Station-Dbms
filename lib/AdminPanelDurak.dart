@@ -5,9 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-void main()  async{
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(AdminDurak());
 }
 
@@ -53,6 +52,7 @@ class AdminPanelDurak extends StatefulWidget {
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
+  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
   final _firestore=FirebaseFirestore.instance;
 
 
@@ -95,145 +95,174 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   }
 
-  TextEditingController nameController=TextEditingController();
-  TextEditingController passwordController=TextEditingController();
-  TextEditingController emailController=TextEditingController();
+  TextEditingController stationController=TextEditingController();
+  TextEditingController latController=TextEditingController();
+  TextEditingController lngController=TextEditingController();
+  TextEditingController person_count_Controller=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
 
-    final width1 = MediaQuery.of(context).size.width * 0.30;
+    final width1 = MediaQuery.of(context).size.width * 0.37;
 
-    final height1 = MediaQuery.of(context).size.height * 0.36;
+    final height1 = MediaQuery.of(context).size.height * 0.50;
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin Durak İşlemleri"),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: 400,
-              height: 300,
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: baslangicKonum,
-                markers: Set<Marker>.of(isaretler),
-                onMapCreated: (GoogleMapController controller){
-                  haritaKontrol.complete(controller);
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                width: 400,
+                height: 300,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: baslangicKonum,
+                  markers: Set<Marker>.of(isaretler),
+                  onMapCreated: (GoogleMapController controller){
+                    haritaKontrol.complete(controller);
+                  },
+                ),
+              ),
+              ElevatedButton(
+                child: Text("Konuma Git"),
+                onPressed: (){
+                  konumaGit();
                 },
               ),
-            ),
-            ElevatedButton(
-              child: Text("Konuma Git"),
-              onPressed: (){
-                konumaGit();
-              },
-            ),
-            ElevatedButton(
-                onPressed: (){
-                  Future.delayed(
-                      const Duration(seconds: 0),
-                          () => showDialog(
-                          context: context,
-                          builder: (context) => SingleChildScrollView(
-                            child: Container(
-                              child: AlertDialog(
-                                title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                backgroundColor: Colors.orangeAccent,
-                                content: SizedBox(
-                                  height: height1,
-                                  width: width1,
-                                  child: Column(
-                                    children: [
-                                      Theme(
-                                          data:Theme.of(context).copyWith(
-                                            colorScheme: ThemeData().colorScheme.copyWith(
-                                              primary:Colors.white,
+              ElevatedButton(
+                  onPressed: (){
+                    Future.delayed(
+                        const Duration(seconds: 0),
+                            () => showDialog(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Expanded(
+                                child: Container(
+                                  child: AlertDialog(
+                                    title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                    backgroundColor: Colors.orangeAccent,
+                                    content: SizedBox(
+                                      height: height1,
+                                      width: width1,
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+
+                                            child: Theme(
+                                                data:Theme.of(context).copyWith(
+                                                  colorScheme: ThemeData().colorScheme.copyWith(
+                                                    primary:Colors.white,
+                                                  ),
+                                                ),
+                                                child: ozelTextField(color:Colors.indigo,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak ismini giriniz",label: "Durak ismi")
                                             ),
                                           ),
-                                          child: ozelTextField(color:Colors.indigo,icon:Icons.supervised_user_circle,tftctr:nameController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+
+                                          Expanded(
+
+                                            child: Theme(
+                                                data:Theme.of(context).copyWith(
+                                                  colorScheme: ThemeData().colorScheme.copyWith(
+                                                    primary:Colors.white,
+                                                  ),
+                                                ),
+                                                child: ozelTextField(color:Colors.tealAccent,icon:Icons.gps_not_fixed,tftctr:latController,hintText: "Lat",label: "Lat:")
+                                            ),
+                                          ),
+                                          Expanded(
+
+                                            child: Theme(
+                                                data:Theme.of(context).copyWith(
+                                                  colorScheme: ThemeData().colorScheme.copyWith(
+                                                    primary:Colors.white,
+                                                  ),
+                                                ),
+                                                child: ozelTextField(color:Colors.redAccent,icon:Icons.gps_not_fixed,tftctr:lngController,hintText: "Lng",label: "Lng:")
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Theme(
+                                                data:Theme.of(context).copyWith(
+                                                  colorScheme: ThemeData().colorScheme.copyWith(
+                                                    primary:Colors.white,
+                                                  ),
+                                                ),
+                                                child: ozelTextField(color:Colors.green,icon:Icons.person,tftctr:person_count_Controller,hintText: "Duraktaki kişi sayısı",label: "Kişi sayısı:")
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Theme(
-                                          data:Theme.of(context).copyWith(
-                                            colorScheme: ThemeData().colorScheme.copyWith(
-                                              primary:Colors.white,
-                                            ),
-                                          ),
-                                          child: ozelTextField(color:Colors.tealAccent,icon:Icons.email,tftctr:emailController,hintText: "Lat",label: "Lat:")
+                                    ),
+                                    actions: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: FlatButton(
+                                          child: Text("İptal",style: TextStyle(color: Colors.white),),
+
+                                          onPressed: (){
+                                            stationController.text="";
+                                            latController.text="";
+                                            lngController.text="";
+                                            person_count_Controller.text="";
+                                            Navigator.pop(context);
+
+                                          },
+
+                                        ),
                                       ),
-                                      Theme(
-                                          data:Theme.of(context).copyWith(
-                                            colorScheme: ThemeData().colorScheme.copyWith(
-                                              primary:Colors.white,
-                                            ),
-                                          ),
-                                          child: ozelTextField(color:Colors.redAccent,icon:Icons.password,tftctr:passwordController,hintText: "Lng",label: "Lng:")
-                                      )
+                                      FlatButton(
+                                        child: Text("Güncelle",style: TextStyle(color: Colors.white),),
+                                        onPressed: () {
+                                          CollectionReference durakRef=_firestore.collection('Duraklar');
+                                          setState(() async{
+                                            await durakRef.doc(stationController.text).update({'Isım':stationController.text});
+                                            await durakRef.doc(stationController.text).update({'lat':latController.text});
+                                            await durakRef.doc(stationController.text).update({'lng':lngController.text});
+                                            await durakRef.doc(stationController.text).update({'Kisi Sayısı':person_count_Controller.text});
+
+                                            stationController.text="";
+                                            latController.text="";
+                                            lngController.text="";
+                                            person_count_Controller.text="";
+
+                                            Navigator.pop(context);
+                                          });
+
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
-                                actions: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(0.0),
-                                    child: FlatButton(
-                                      child: Text("İptal",style: TextStyle(color: Colors.white),),
-
-                                      onPressed: (){
-                                        nameController.text="";
-                                        emailController.text="";
-                                        passwordController.text="";
-                                        Navigator.pop(context);
-
-                                      },
-
-                                    ),
-                                  ),
-                                  FlatButton(
-                                    child: Text("Güncelle",style: TextStyle(color: Colors.white),),
-                                    onPressed: () {
-                                      /*CollectionReference userRef=_firestore.collection('Kisiler');
-                                      setState(() async{
-                                        await userRef.doc(nameController.text).update({'Name':nameController.text});
-                                        await userRef.doc(nameController.text).update({'Password':passwordController.text});
-                                        await userRef.doc(nameController.text).update({'Email':emailController.text});
-                                        nameController.text="";
-                                        passwordController.text="";
-                                        emailController.text="";
-
-                                        Navigator.pop(context);
-                                      });*/
-
-                                    },
-                                  ),
-                                ],
                               ),
-                            ),
-                          )
-                      ));
-                },
-                child: SizedBox(
-                  width: width1,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.bus_alert,
-                            color:Colors.white
-                      ),
-                      SizedBox(width: 10,),
-                      Text("Durak Ekle"),
-                    ],
+                            )
+                        ));
+                  },
+                  child: SizedBox(
+                    width: width1,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.bus_alert,
+                              color:Colors.white
+                        ),
+                        SizedBox(width: 10,),
+                        Text("Durak Ekle"),
+                      ],
+                    ),
                   ),
-                ),
-              style: ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
 
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
 
