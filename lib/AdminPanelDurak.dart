@@ -89,12 +89,12 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   List listLat = [];
   List listLng = [];
 
+  List liste = [];
   getBusStation(stationRef) async {
-
+    liste=[];
     QuerySnapshot querySnapshot = await stationRef.get();
     final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
-    List liste = [];
     for (int i = 0; i < _docData.length; i++) {
       liste.add(_docData[i]);
     }
@@ -118,16 +118,12 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
     for( var i = 0 ; i <= listLat.length-1; i++ ) {
-
-      ;
-
         var x=Marker(
-        markerId: MarkerId("asdsa"),
+        markerId: MarkerId("asddasd"),
         position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
       );
       array.add(x);
     }
-
     return array;
   }
 
