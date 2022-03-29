@@ -79,7 +79,8 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
   }
-
+  List listLat = [];
+  List listLng = [];
 
   getBusStation(stationRef) async {
 
@@ -91,8 +92,11 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
       liste.add(_docData[i]);
     }
 
+
     for(int i=0;i<liste.length;i++){
-      print(liste[i]['Isim']+"    "+liste[i]['lat']+"  "+liste[i]['lng']+"  "+liste[i]['KisiSayisi']);
+      //print("İsim: ${liste[i]['Isim']}   Lat : ${liste[i]['lat']}  Lng: ${liste[i]['lng']} Kişi sayısı : ${liste[i]['KisiSayisi']}");
+      listLat.add(liste[i]['lat']);
+      listLng.add(liste[i]['lng']);
 
     }
   }
@@ -237,9 +241,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                       TextButton(
                                         child: Text("Durak Ekle",style: TextStyle(color: Colors.white),),
                                         onPressed: () async {
-
-                                          final Future<FirebaseApp> _initialization=Firebase.initializeApp();
-                                            print("zaaaaaaaaaaaaaaaaaaaaaaaaa");
+                                          print("zaaaaaaaaaaaaaaaaaaaaaaaaa");
                                           final _firestore=FirebaseFirestore.instance;
                                           CollectionReference durakRef=_firestore.collection('Duraklar');
 
