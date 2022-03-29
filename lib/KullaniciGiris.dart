@@ -163,6 +163,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
           child: Column(
             children: <Widget>[
               TextField(
+                controller: nameController,
                 cursorColor: Colors.grey,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.supervised_user_circle),
@@ -187,6 +188,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
               ),
               SizedBox(height: 16,),
               TextField(
+                controller: passwordController,
                 cursorColor: Colors.grey,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
