@@ -31,8 +31,12 @@ class _AdminGirisState extends State<AdminGiris> {
   final adminU = "Umut";
   final adminP = "Goksel";
 
+  final GlobalKey<FormState> _formKey= GlobalKey<FormState>();
+
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.7;
@@ -65,11 +69,14 @@ class _AdminGirisState extends State<AdminGiris> {
                     padding: EdgeInsets.symmetric(
                         horizontal: 40
                     ),
-                child:Column(
-                  children: [
-                    ozelTextField(icon:Icons.supervised_user_circle,tftctr:nameController,hintText: "Kullanıcı Adınız",label: "Kullanıcı Adı"),
-                    ozelTextField(icon:Icons.password,tftctr:passwordController,hintText: "Şifre",label: "Şifre",obsureText: true),
-                  ],
+                child:Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      ozelFormTextField(icon:Icons.supervised_user_circle,tftctr:nameController,degisken:"Kullanıcı Adını",hintText: "Kullanıcı Adınız",label: "Kullanıcı Adı"),
+                      ozelFormTextField(icon:Icons.password,tftctr:passwordController,degisken:"Şifre",hintText: "Şifre",label: "Şifre",obsureText: true)
+                    ],
+                  ),
                 )
                 ),
                 SizedBox(
@@ -77,18 +84,8 @@ class _AdminGirisState extends State<AdminGiris> {
                   height: height4,
                   child: ElevatedButton(
                     onPressed: (){
+                      if(_formKey.currentState!.validate()){
 
-                      if(nameController.text==""){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(backgroundColor: Colors.white,content: Text("Lütfen isim alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                        );
-                      }
-                      else if(passwordController.text==""){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(backgroundColor: Colors.white,content: Text("Lütfen şifre alanını doldurunuz !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
-                        );
-                      }
-                      else{
                         if(nameController.text==adminU && passwordController.text==adminP){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
                           nameController.text="";
@@ -99,6 +96,7 @@ class _AdminGirisState extends State<AdminGiris> {
                               SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
                           );
                         }
+
                       }
 
                     },
@@ -119,7 +117,8 @@ class _AdminGirisState extends State<AdminGiris> {
 }
 
 
-Widget ozelTextField({icon,tftctr,hintText,label,obsureText = false,}){
+Widget ozelFormTextField({icon,tftctr,degisken,hintText,label,obsureText = false,}){
+  String text1=tftctr.text;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -129,9 +128,15 @@ Widget ozelTextField({icon,tftctr,hintText,label,obsureText = false,}){
           color: Colors.black87
       ),),
       SizedBox(height: 5,),
-      TextField(
+      TextFormField(
         controller: tftctr,
         obscureText: obsureText,
+        validator: (text1){
+          if(text1!.isEmpty){
+            return "Lütfen bir $degisken yazın";
+          }
+          return null;
+        },
         decoration: InputDecoration(
           prefixIcon: Icon(icon),
           hintText: hintText,

@@ -14,7 +14,6 @@ void main() {
 }
 
 
-
 class AdminDurak extends StatelessWidget {
 
   final Future<FirebaseApp> _initialization=Firebase.initializeApp();
@@ -72,14 +71,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   var gidilecekKonum = CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 10,);
 
-  /*iconOlustur(context){
-    ImageConfiguration configuration = createLocalImageConfiguration(context);
-    BitmapDescriptor.fromAssetImage(configuration, "resimler/bus.png").then((icon) {
-      setState(() {
-        konumIcon = icon;
-      });
-    });
-  }*/
+
 
   Future<void> konumaGit() async {
     GoogleMapController controller = await haritaKontrol.future;
@@ -89,12 +81,12 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   List listLat = [];
   List listLng = [];
 
-  List liste = [];
   getBusStation(stationRef) async {
-    liste=[];
+
     QuerySnapshot querySnapshot = await stationRef.get();
     final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
+    List liste = [];
     for (int i = 0; i < _docData.length; i++) {
       liste.add(_docData[i]);
     }
@@ -118,19 +110,18 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
     for( var i = 0 ; i <= listLat.length-1; i++ ) {
+
+      ;
+
         var x=Marker(
-        markerId: MarkerId("asddasd"),
+        markerId: MarkerId("asdsa"),
         position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
       );
       array.add(x);
     }
+
     return array;
   }
-
-
-
-
-
 
 
 
