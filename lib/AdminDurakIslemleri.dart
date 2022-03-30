@@ -271,14 +271,16 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
                                                                     ),
                                                                     TextButton(
                                                                       child: Text("Güncelle",style: TextStyle(color: Colors.white),),
-                                                                      onPressed: () {
+                                                                      onPressed: () async{
                                                                         CollectionReference stationRef=_firestore.collection('Duraklar');
+
+                                                                        await stationRef.doc(stationController.text).update({'Isim':stationController.text});
+                                                                        await stationRef.doc(stationController.text).update({'lat':latController.text});
+                                                                        await stationRef.doc(stationController.text).update({'lng':lngController.text});
+                                                                        await stationRef.doc(stationController.text).update({'KisiSayi':person_count_Controller.text});
+
                                                                         setState(() async{
-                                                                          await stationRef.doc(stationController.text).update({'Isim':stationController.text});
-                                                                          await stationRef.doc(stationController.text).update({'lat':latController.text});
-                                                                          await stationRef.doc(stationController.text).update({'lng':lngController.text});
-                                                                          await stationRef.doc(stationController.text).update({'KisiSayi':person_count_Controller.text});
-                                                                          stationController.text="";
+                                                                         stationController.text="";
                                                                           latController.text="";
                                                                           lngController.text="";
                                                                           person_count_Controller.text="";
