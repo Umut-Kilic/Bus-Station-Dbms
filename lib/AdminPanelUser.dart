@@ -77,7 +77,6 @@ class _AdminPanelState extends State<AdminPanel> {
       ),
       body: SingleChildScrollView(
         child: Center(
-          child: Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -99,8 +98,7 @@ class _AdminPanelState extends State<AdminPanel> {
                            if(asyncSnapshot.hasData){
                              List<DocumentSnapshot> listofDocumentSnapshot= asyncSnapshot.data.docs;
 
-                             return Expanded(
-                               child: Container(
+                             return Container(
                                  child: ListView.builder(
                                    itemCount: listofDocumentSnapshot.length,
                                    itemBuilder: (context,index){
@@ -264,7 +262,7 @@ class _AdminPanelState extends State<AdminPanel> {
                                      );
                                    },
                                  ),
-                               ),
+
                              );
                            }
                            else{
@@ -377,7 +375,7 @@ class _AdminPanelState extends State<AdminPanel> {
                 ),
               ],
             ),
-          ),
+
         ),
       ),
 

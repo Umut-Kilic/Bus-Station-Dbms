@@ -181,7 +181,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                           initialCameraPosition: baslangicKonum,
                           markers:  Set<Marker>.of( _createMarker()),
 
-
                           onMapCreated: (GoogleMapController controller){
                             haritaKontrol.complete(controller);
                           },
@@ -200,7 +199,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                   () => showDialog(
                                   context: context,
                                   builder: (context) => SingleChildScrollView(
-                                    child: Expanded(
                                       child: Container(
                                         child: AlertDialog(
                                           title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
@@ -298,7 +296,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                           ],
                                         ),
                                       ),
-                                    ),
+
                                   )
                               ));
                         },

@@ -89,7 +89,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width2 = MediaQuery.of(context).size.width;
+    final width2 = MediaQuery.of(context).size.width*0.5;
     final width3 = MediaQuery.of(context).size.width;
     final width4 = MediaQuery.of(context).size.width;
     final height1 = MediaQuery.of(context).size.height * 0.20;
@@ -127,6 +127,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                 padding: const EdgeInsets.only(top: 25.0),
                 child: SizedBox(
                   height: height1,
+                  width: width2,
                   child: FittedBox(
                     child: Image.asset("resimler/login.png"),
                     fit: BoxFit.fill,

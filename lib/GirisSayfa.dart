@@ -38,6 +38,8 @@ class _AdminUserSayfasiState extends State<AdminUserSayfasi> {
   @override
   Widget build(BuildContext context) {
 
+    final width1 = MediaQuery.of(context).size.width * 0.45;
+
     final height1 = MediaQuery.of(context).size.height * 0.15;
 
     return Scaffold(
@@ -52,7 +54,9 @@ class _AdminUserSayfasiState extends State<AdminUserSayfasi> {
             padding: const EdgeInsets.only(top:60.0),
             child: SizedBox(
               height: height1,
+              width: width1,
               child: FittedBox(
+
                 child:Image.asset("resimler/kocaeli.png"),
                 fit: BoxFit.fill,
               ),

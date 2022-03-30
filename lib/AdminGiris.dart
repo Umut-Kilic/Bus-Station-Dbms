@@ -40,7 +40,7 @@ class _AdminGirisState extends State<AdminGiris> {
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.7;
-    final width4 = MediaQuery.of(context).size.width;
+    final width2 = MediaQuery.of(context).size.width*0.5;
 
     final height1 = MediaQuery.of(context).size.height * 0.1;
     final height2 = MediaQuery.of(context).size.height * 0.25;
@@ -59,6 +59,7 @@ class _AdminGirisState extends State<AdminGiris> {
                   padding: const EdgeInsets.only(bottom:25.0),
                   child: SizedBox(
                     height: height2,
+                    width: width2,
                     child: FittedBox(
                       child:Image.asset("resimler/admin1.png"),
                       fit: BoxFit.fill,
