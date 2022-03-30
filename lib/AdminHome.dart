@@ -71,7 +71,7 @@ class _AdminHomeState extends State<AdminHome> {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDurak()));
                       }, child: Text("Durak İşlemleri")
                   ),
                 ],

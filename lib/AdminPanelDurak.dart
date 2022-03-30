@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +10,6 @@ import 'AdminDurakIslemleri.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
   runApp(AdminDurak());
 }
 
@@ -58,8 +58,8 @@ class AdminPanelDurak extends StatefulWidget {
 
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
-  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
 
+  final _firestore=FirebaseFirestore.instance;
 
   late BitmapDescriptor konumIcon;
 
@@ -72,7 +72,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   var gidilecekKonum = CameraPosition(target: LatLng(41.0039643,28.4517462),zoom: 10,);
 
 
-
   Future<void> konumaGit() async {
     GoogleMapController controller = await haritaKontrol.future;
 
@@ -81,8 +80,9 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   List listLat = [];
   List listLng = [];
 
-  getBusStation(stationRef) async {
-
+  Future getBusStation(stationRef) async {
+    listLat = [];
+    listLng = [];
     QuerySnapshot querySnapshot = await stationRef.get();
     final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
@@ -99,29 +99,29 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
     }
+    return liste;
   }
 
 
   List<Marker> _createMarker (){
     var array= <Marker>[];
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-    print(listLat[2]);
-
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
     for( var i = 0 ; i <= listLat.length-1; i++ ) {
 
-      ;
-
-        var x=Marker(
-        markerId: MarkerId("asdsa"),
-        position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
+      var x=Marker(
+          markerId: MarkerId("asdsa"),
+          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
       );
       array.add(x);
     }
 
     return array;
   }
+
+
+
+
+
 
 
 
@@ -134,7 +134,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Future<void> durakEkle(durakRef) async {
     Map<String,dynamic> stationData={'Isim':stationController.text,'lat':latController.text,'lng':lngController.text,'KisiSayisi':person_count_Controller.text};
     await durakRef.doc(stationController.text).set(stationData);
-
     Navigator.pop(context);  // pop current page
     Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
 
@@ -149,7 +148,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   @override
   Widget build(BuildContext context) {
-    final _firestore=FirebaseFirestore.instance;
+
     CollectionReference durakRef=_firestore.collection('Duraklar');
 
     final width1 = MediaQuery.of(context).size.width * 0.37;
@@ -157,13 +156,14 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     final height1 = MediaQuery.of(context).size.height * 0.50;
     final height2 = MediaQuery.of(context).size.height * 0.60;
 
-    return FutureBuilder(
+    return FutureBuilder<dynamic> (
       future: getBusStation(durakRef),
         builder: (context, snapshot) {
           if(snapshot.hasError){
             return Center(child: Text("Beklenmeyen bir hata ortaya çıktı"));
           }
-          else {
+
+          else if(snapshot.hasData){
             return Scaffold(
               appBar: AppBar(
                 title: Text("Admin Durak İşlemleri"),
@@ -182,7 +182,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                           markers:  Set<Marker>.of( _createMarker()),
 
 
-                  onMapCreated: (GoogleMapController controller){
+                          onMapCreated: (GoogleMapController controller){
                             haritaKontrol.complete(controller);
                           },
                         ),
@@ -337,6 +337,11 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
             );
           }
+          else{
+            print("Bekleeeee");
+            return Center(child: CircularProgressIndicator());
+          }
+
 
         }
     );
@@ -344,6 +349,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
   }
+
 }
 
 

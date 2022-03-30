@@ -206,7 +206,6 @@ class _AdminPanelState extends State<AdminPanel> {
                                                                  TextButton(
                                                                    child: Text("Güncelle",style: TextStyle(color: Colors.white),),
                                                                    onPressed: () {
-                                                                     CollectionReference userRef=_firestore.collection('Kisiler');
                                                                      setState(() async{
                                                                        await userRef.doc(nameController.text).update({'Name':nameController.text});
                                                                        await userRef.doc(nameController.text).update({'Password':passwordController.text});

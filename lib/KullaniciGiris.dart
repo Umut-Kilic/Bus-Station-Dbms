@@ -8,6 +8,7 @@ import 'package:yazlab2_proje2/kayitOl.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(Kg());
 }
 
