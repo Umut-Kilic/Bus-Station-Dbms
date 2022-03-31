@@ -6,6 +6,9 @@ import 'package:yazlab2_proje2/GirisSayfa.dart';
 import 'package:yazlab2_proje2/UserDisplay.dart';
 import 'package:yazlab2_proje2/kayitOl.dart';
 
+import 'database/Kisiler.dart';
+import 'database/Kisilerdao.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -44,6 +47,64 @@ class KullaniciGiris extends StatefulWidget {
 }
 
 class _KullaniciGirisState extends State<KullaniciGiris> {
+
+  Future<void> kisileriGoster() async{
+    var liste= await Kisilerdao().tumKisiler();
+
+    for(Kisiler k in liste){
+      print("Kisi id : ${k.kisi_id}\tKisi userName : ${k.userName}\tKisi email : ${k.email}\tKisi sifre : ${k.password}\tKisi rolu : ${k.role}");
+    }
+  }
+/*
+  Future<void> ekle() async{
+    await Kisilerdao().kisiEkle("Sedat", 37);
+  }
+  Future<void> sil() async{
+    await Kisilerdao().kisiSil( 3);
+  }
+  Future<void> guncelle() async{
+    await Kisilerdao().kisiGuncelle(2,"Yeni Osman",99);
+  }
+
+  Future<void> kayitKontrol() async{
+    int sonuc= await Kisilerdao().kayitKontrol("Ahmet");
+    print("Veritabanında ahmet sayısı : $sonuc");
+  }
+  Future<void> kisiGetir() async{
+    Kisiler kisi= await Kisilerdao().kisiGetir(1);
+    print("Veritabanında gelen kişi bilgileri: ${kisi.kisi_id}  ${kisi.kisi_ad}  ${kisi.kisi_yas}");
+  }
+
+  Future<void> aranankisileriGoster() async{
+    var liste= await Kisilerdao().kisiArama("t");
+
+    for(Kisiler k in liste){
+      print("Kisi id : ${k.kisi_id} \tKisi ad : ${k.kisi_ad} \tKisi yas : ${k.kisi_yas}");
+    }
+  }
+
+  Future<void> rastgeleGetir() async{
+    var liste= await Kisilerdao().rastgele2KisiGetir();
+
+    for(Kisiler k in liste){
+      print("Kisi id : ${k.kisi_id} \tKisi ad : ${k.kisi_ad} \tKisi yas : ${k.kisi_yas}");
+    }
+  }*/
+
+  @override
+  void initState() {
+    super.initState();
+
+    kisileriGoster();
+    //ekle();
+    //sil();
+    //guncelle();
+    //kayitKontrol();
+    //kisiGetir();
+    //aranankisileriGoster();
+    //rastgeleGetir();
+  }
+
   final _firestore = FirebaseFirestore.instance;
 
   TextEditingController nameController = TextEditingController();
@@ -114,7 +175,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
           ),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AdminUserSayfasi()));
+                MaterialPageRoute(builder: (context) => GirisSayfa()));
           },
         ),
       ),

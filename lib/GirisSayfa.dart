@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/AdminGiris.dart';
 import 'package:yazlab2_proje2/KullaniciGiris.dart';
-import 'package:yazlab2_proje2/AdminPanelUser.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(AdminUser());
+  runApp(Giris());
 }
 
 
-class AdminUser extends StatelessWidget {
+class Giris extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +20,23 @@ class AdminUser extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: AdminUserSayfasi(),
+        home: GirisSayfa(),
 
     );
   }
 }
 
 
-class AdminUserSayfasi extends StatefulWidget {
-  const AdminUserSayfasi({Key? key}) : super(key: key);
+class GirisSayfa extends StatefulWidget {
+  const GirisSayfa({Key? key}) : super(key: key);
 
   @override
-  State<AdminUserSayfasi> createState() => _AdminUserSayfasiState();
+  State<GirisSayfa> createState() => _GirisSayfaState();
 }
 
-class _AdminUserSayfasiState extends State<AdminUserSayfasi> {
+class _GirisSayfaState extends State<GirisSayfa> {
+
+
   @override
   Widget build(BuildContext context) {
 
