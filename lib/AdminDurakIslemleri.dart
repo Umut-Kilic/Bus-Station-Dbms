@@ -10,6 +10,10 @@ class AdminDurakIslemleri extends StatefulWidget {
   @override
   State<AdminDurakIslemleri> createState() => _AdminDurakIslemleriState();
 }
+var baslangicKonum = CameraPosition(
+  target: LatLng(40.766666, 29.916668),
+  zoom: 8,
+);
 
 class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
@@ -25,10 +29,6 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
   Completer<GoogleMapController> haritaKontrol = Completer();
 
-  var baslangicKonum = CameraPosition(
-    target: LatLng(40.766666, 29.916668),
-    zoom: 8,
-  );
 
   List<Marker> isaretler = <Marker>[];
 
@@ -64,8 +64,19 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
       var x=Marker(
           markerId: MarkerId("asdsa"),
-          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
+          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
+              onTap: () {
+                //this is what you're looking for!
+                baslangicKonum = CameraPosition(
+                  target: LatLng(40.766666, 29.916668),
+                  zoom: 8,
+                );
+
+              print(listLat[i]);
+              }
+
       );
+
       array.add(x);
     }
 

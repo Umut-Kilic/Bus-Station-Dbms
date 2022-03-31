@@ -110,7 +110,18 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
       var x=Marker(
           markerId: MarkerId("asdsa"),
-          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i]))
+          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
+          onTap: () {
+        //this is what you're looking for!
+        baslangicKonum = CameraPosition(
+          target: LatLng(40.766666, 29.916668),
+          zoom: 8,
+        );
+
+        print(listLat[i]);
+      }
+
+
       );
       array.add(x);
     }
