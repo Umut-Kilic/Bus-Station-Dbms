@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yazlab2_proje2/database/DurakKisi.dart';
+import 'package:yazlab2_proje2/database/DurakKisidao.dart';
 
 import 'AdminDurakIslemleri.dart';
 
@@ -136,6 +138,10 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
 
+
+
+
+
   TextEditingController stationController=TextEditingController();
   TextEditingController latController=TextEditingController();
   TextEditingController lngController=TextEditingController();
@@ -159,6 +165,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   @override
   Widget build(BuildContext context) {
+
 
     CollectionReference durakRef=_firestore.collection('Duraklar');
 

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/AdminPanelDurak.dart';
+import 'package:yazlab2_proje2/database/Duraklardao.dart';
 
 import 'AdminPanelUser.dart';
+import 'database/DurakKisi.dart';
+import 'database/DurakKisidao.dart';
+import 'database/Kisilerdao.dart';
 
 
 class AdminHome extends StatefulWidget {
@@ -12,6 +16,29 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
+
+  Future<void> goster() async{
+    var liste=await DurakKisidao().tumDurakKisi();
+    var duraklar = await Duraklardao().tumDuraklar();
+    var kisiler= await Kisilerdao().tumKisiler();
+
+
+    print("Liste uzunlugu : ${liste.length}");
+    print("kisiler uzunlugu : ${kisiler.length}");
+    print("duraklar uzunlugu : ${duraklar.length}");
+
+    for(DurakKisi dk in liste){
+      print("Durak ad : ${dk.durak.durak_ad} duraktaki kişinin username : ${dk.kisi.userName}");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    goster();
+  }
+
   @override
   Widget build(BuildContext context) {
 
