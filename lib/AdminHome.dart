@@ -31,11 +31,14 @@ class _AdminHomeState extends State<AdminHome> {
       print("Durak ad : ${dk.durak.durak_ad} duraktaki kişinin username : ${dk.kisi.userName}");
     }
   }
+  Future<void> ekle() async{
+    Kisilerdao().kisiEkle("sfsafsf", "safsfsaf", "asfsfsaf", "user");
+  }
 
   @override
   void initState() {
     super.initState();
-
+    ekle();
     goster();
   }
 

@@ -7,7 +7,7 @@ class Duraklardao{
   Future<List<Duraklar>> tumDuraklar() async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
-    print("Duraklar");
+
     List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Duraklar");
 
     return List.generate(maps.length, (index) {
