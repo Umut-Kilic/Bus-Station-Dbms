@@ -2,52 +2,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:yazlab2_proje2/database/DurakKisi.dart';
-import 'package:yazlab2_proje2/database/DurakKisidao.dart';
+import 'package:yazlab2_proje2/database/Duraklar.dart';
+import 'package:yazlab2_proje2/database/Duraklardao.dart';
 
 import 'AdminDurakIslemleri.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(AdminDurak());
-}
-
-
-class AdminDurak extends StatelessWidget {
-
-  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    return MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: FutureBuilder(
-            future: _initialization,
-            builder: (context,snapshot){
-              if(snapshot.hasError){
-                return Center(child: Text("Beklenmeyen bir hata ortaya çıktı"));
-              }
-              else if(snapshot.hasData){
-                return AdminPanelDurak();
-              }
-              else{
-                return Center(child: CircularProgressIndicator());
-              }
-            }
-        )
-
-    );
-  }
-}
 
 class AdminPanelDurak extends StatefulWidget {
   const AdminPanelDurak({Key? key}) : super(key: key);
@@ -61,7 +22,6 @@ class AdminPanelDurak extends StatefulWidget {
 
 class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
-  final _firestore=FirebaseFirestore.instance;
 
   late BitmapDescriptor konumIcon;
 
@@ -79,29 +39,24 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
   }
+  List<Duraklar> duraklar=[];
   List listLat = [];
   List listLng = [];
 
-  Future getBusStation(stationRef) async {
+  Future getBusStation() async {
+    duraklar=[];
     listLat = [];
     listLng = [];
-    QuerySnapshot querySnapshot = await stationRef.get();
-    final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
-    List liste = [];
-    for (int i = 0; i < _docData.length; i++) {
-      liste.add(_docData[i]);
+    duraklar=await Duraklardao().tumDuraklar();
+
+    for(int i=0;i<duraklar.length;i++){
+      listLat.add(duraklar[i].lat);
+      listLng.add(duraklar[i].lng);
     }
 
 
-
-    for(int i=0;i<liste.length;i++){
-      listLat.add(liste[i]['lat']);
-      listLng.add(liste[i]['lng']);
-
-
-    }
-    return liste;
+    return duraklar;
   }
 
 
@@ -132,16 +87,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   }
 
 
-
-
-
-
-
-
-
-
-
-
   TextEditingController stationController=TextEditingController();
   TextEditingController latController=TextEditingController();
   TextEditingController lngController=TextEditingController();
@@ -156,6 +101,15 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   }
 
+  Future<void> durakEklee(String stationName,String lat,String lng,int kisi_sayisi) async{
+
+    await Duraklardao().durakEkle(stationName, lat, lng, kisi_sayisi);
+
+
+    Navigator.pop(context);  // pop current page
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
+  }
+
   Future<void> durakGuncelle(durakRef) async {
     await durakRef.doc(stationController.text).update({'Isim':stationController.text});
     await durakRef.doc(stationController.text).update({'lat':latController.text});
@@ -167,15 +121,13 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Widget build(BuildContext context) {
 
 
-    CollectionReference durakRef=_firestore.collection('Duraklar');
-
     final width1 = MediaQuery.of(context).size.width * 0.37;
 
     final height1 = MediaQuery.of(context).size.height * 0.50;
     final height2 = MediaQuery.of(context).size.height * 0.60;
 
     return FutureBuilder<dynamic> (
-      future: getBusStation(durakRef),
+      future: getBusStation(),
         builder: (context, snapshot) {
           if(snapshot.hasError){
             return Center(child: Text("Beklenmeyen bir hata ortaya çıktı"));
@@ -203,12 +155,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                             haritaKontrol.complete(controller);
                           },
                         ),
-                      ),
-                      ElevatedButton(
-                        child: Text("Konuma Git"),
-                        onPressed: (){
-                          konumaGit();
-                        },
                       ),
                       ElevatedButton(
                         onPressed: (){
@@ -296,13 +242,12 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
                                                 setState(() async{
 
-                                                  durakEkle(durakRef);
+                                                  durakEklee(stationController.text, latController.text, lngController.text, int.parse(person_count_Controller.text));
 
                                                   stationController.text="";
                                                   latController.text="";
                                                   lngController.text="";
                                                   person_count_Controller.text="";
-
 
                                                   Navigator.pop(context);
 

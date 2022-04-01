@@ -119,8 +119,7 @@ class _AdminPanelState extends State<AdminPanel> {
                                           onTap: () {
                                             nameController.text = kisi.userName;
                                             emailController.text = kisi.email;
-                                            passwordController.text =
-                                                kisi.password;
+                                            passwordController.text = kisi.password;
 
                                             Future.delayed(
                                                 const Duration(seconds: 0),

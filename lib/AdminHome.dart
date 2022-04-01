@@ -124,7 +124,7 @@ class _AdminHomeState extends State<AdminHome> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminDurak()));
+                                  builder: (context) => AdminPanelDurak()));
                         },
                         child: Text("Durak İşlemleri")),
                   ],

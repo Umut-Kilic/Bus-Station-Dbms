@@ -1,8 +1,10 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'database/Duraklar.dart';
+import 'database/Duraklardao.dart';
 
 class AdminDurakIslemleri extends StatefulWidget {
   const AdminDurakIslemleri({Key? key}) : super(key: key);
@@ -10,13 +12,16 @@ class AdminDurakIslemleri extends StatefulWidget {
   @override
   State<AdminDurakIslemleri> createState() => _AdminDurakIslemleriState();
 }
-var baslangicKonum = CameraPosition(
-  target: LatLng(40.766666, 29.916668),
-  zoom: 8,
-);
+
 
 class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
+  var baslangicKonum = CameraPosition(
+    target: LatLng(40.766666, 29.916668),
+    zoom: 8,
+  );
+
+  List<Duraklar> duraklar=[];
   List listLat = [];
   List listLng = [];
 
@@ -25,8 +30,6 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
   TextEditingController lngController=TextEditingController();
   TextEditingController person_count_Controller=TextEditingController();
 
-  final _firestore=FirebaseFirestore.instance;
-
   Completer<GoogleMapController> haritaKontrol = Completer();
 
 
@@ -34,27 +37,20 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
 
 
-  Future getBusStation(stationRef) async {
+  Future<List<Duraklar>> getBusStation() async {
+    duraklar=[];
+    listLat = [];
+    listLng = [];
 
-    QuerySnapshot querySnapshot = await stationRef.get();
-    final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    duraklar=await Duraklardao().tumDuraklar();
 
-    List liste = [];
-    for (int i = 0; i < _docData.length; i++) {
-      liste.add(_docData[i]);
+    for(int i=0;i<duraklar.length;i++){
+      listLat.add(duraklar[i].lat);
+      listLng.add(duraklar[i].lng);
     }
 
 
-
-     listLat=[];
-     listLng=[];
-    for(int i=0;i<liste.length;i++){
-      //print("İsim: ${liste[i]['Isim']}   Lat : ${liste[i]['lat']}  Lng: ${liste[i]['lng']} Kişi sayısı : ${liste[i]['KisiSayisi']}");
-      listLat.add(liste[i]['lat']);
-      listLng.add(liste[i]['lng']);
-
-    }
-    return liste;
+    return duraklar;
   }
 
   List<Marker> _createMarker (){
@@ -66,7 +62,6 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
           markerId: MarkerId("asdsa"),
           position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
               onTap: () {
-                //this is what you're looking for!
                 baslangicKonum = CameraPosition(
                   target: LatLng(40.766666, 29.916668),
                   zoom: 8,
@@ -83,11 +78,12 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
     return array;
   }
 
-  Future<void> durakGuncelle(durakRef) async {
-    await durakRef.doc(stationController.text).update({'Isim':stationController.text});
-    await durakRef.doc(stationController.text).update({'lat':latController.text});
-    await durakRef.doc(stationController.text).update({'lng':lngController.text});
-    await durakRef.doc(stationController.text).update({'KisiSayisi':person_count_Controller.text});
+  Future<void> durakGuncelle(int durak_id,String stationName,String  lat,String lng,int kisi_sayisi) async {
+    await Duraklardao().durakGuncelle(durak_id, stationName, lat, lng, kisi_sayisi);
+  }
+
+  Future<void> durakSil(int durak_id) async {
+    await Duraklardao().durakSil(durak_id);
   }
 
 
@@ -95,294 +91,378 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
   @override
   Widget build(BuildContext context) {
     final width1 = MediaQuery.of(context).size.width * 0.37;
+    
 
     final height1 = MediaQuery.of(context).size.height * 0.50;
     final height2 = MediaQuery.of(context).size.height * 0.40;
     final height3 = MediaQuery.of(context).size.height * 0.4742;
 
-    CollectionReference durakRef=_firestore.collection('Duraklar');
 
-    return FutureBuilder(
-        future: getBusStation(durakRef),
-    builder: (context, snapshot) {
-      if(snapshot.hasError){
-        return Center(child: Text("Beklenmeyen bir hata ortaya çıktı"));
-      }
-      else if(snapshot.hasData){
         return Scaffold(
           appBar: AppBar(
             title: Text("Duraklar",style: TextStyle(color:Colors.white),),
             centerTitle: true,
             backgroundColor: Colors.red,
           ),
-          body: SingleChildScrollView(
-            child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 400,
-                      height: height2,
-                      child: GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: baslangicKonum,
-                        markers: Set<Marker>.of(_createMarker()),
-                        onMapCreated: (GoogleMapController controller){
-                          haritaKontrol.complete(controller);
-                        },
-                      ),
-                    ),
+          body: FutureBuilder<List<Duraklar>>(
+            future: getBusStation(),
+            builder: (context, snapshot) {
+              if(snapshot.hasData){
+                var duraklarListesi = snapshot.data;
 
-                    Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: SizedBox(
-                        height: height1,
-                        child: StreamBuilder<QuerySnapshot>(
-                            stream: durakRef.snapshots(),
-
-
-                            builder: (BuildContext context,AsyncSnapshot asyncSnapshot){
-
-                              if(asyncSnapshot.hasError){
-                                return Center(child: Text("Bir hata oluştu lütfen tekrar deneyiniz"),);
-                              }
-                              else{
-                                if(asyncSnapshot.hasData){
-                                  List<DocumentSnapshot> listofDocumentSnapshot= asyncSnapshot.data.docs;
-
-                                  return Column(
-                                    children: [
-                                  Expanded(
-                                  child: Container(
-                                  child: ListView.builder(
-                                    itemCount: listofDocumentSnapshot.length,
-                                    itemBuilder: (context,index){
-                                      var durak_isim=(listofDocumentSnapshot[index].data() as Map)['Isim'];
-                                      var lat = (listofDocumentSnapshot[index].data() as Map)['lat'];
-                                      var lng = (listofDocumentSnapshot[index].data() as Map)['lng'];
-                                      var kisiSayisi = (listofDocumentSnapshot[index].data() as Map)['KisiSayisi'];
-
-                                      return Card(
-                                        child: ListTile(
-
-                                          title: Text("Durak Adı: $durak_isim",
-                                            style:TextStyle(color: Colors.black, fontSize:24,), textAlign: TextAlign.center,
-
-                                          ),
-                                          subtitle:  Text("Lat: $lat  lng: $lng \nKişi sayısı: $kisiSayisi",
-                                            style:TextStyle(color: Colors.white, fontSize:18,),textAlign: TextAlign.center,
-                                          ),
-
-                                          trailing: Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: PopupMenuButton(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(Icons.menu),
-                                                ],
-                                              ),
-                                              itemBuilder: (context)=>[
-                                                PopupMenuItem(
-                                                    value: 1,
-                                                    child: Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(text: "Sil                      ",style: TextStyle(color:Colors.red)),
-                                                          WidgetSpan(child: Icon(Icons.delete)),
-                                                        ],
-                                                      ),
-                                                    )
-                                                ),
-                                                PopupMenuItem(
-                                                  value: 2,
-                                                  child: Text.rich(
-                                                    TextSpan(
-                                                      children: [
-                                                        TextSpan(text:"Güncelle           ",style: TextStyle(color:Colors.indigoAccent)),
-                                                        WidgetSpan(child: Icon(Icons.refresh)),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  onTap: () {
-                                                    stationController.text=(listofDocumentSnapshot[index].data() as Map)['Isim'];
-                                                    latController.text=(listofDocumentSnapshot[index].data() as Map)['lat'];
-                                                    lngController.text=(listofDocumentSnapshot[index].data() as Map)['lng'];
-                                                    person_count_Controller.text=(listofDocumentSnapshot[index].data() as Map)['KisiSayisi'];
-
-
-                                                    Future.delayed(
-                                                        const Duration(seconds: 0),
-                                                            () => showDialog(
-                                                            context: context,
-                                                            builder: (context) => SingleChildScrollView(
-                                                              child: Container(
-                                                                child: AlertDialog(
-                                                                  title: Text("Durak Güncelleme Ekranı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                                                  backgroundColor: Colors.indigoAccent,
-                                                                  content: SizedBox(
-                                                                    height: height3,
-                                                                    width: width1,
-                                                                    child: Column(
-                                                                      children: [
-                                                                        Theme(
-                                                                            data:Theme.of(context).copyWith(
-                                                                              colorScheme: ThemeData().colorScheme.copyWith(
-                                                                                primary:Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            child: ozelTextField(color:Colors.yellow,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak adı",label: "Durak Adı")
-                                                                        ),
-                                                                        Theme(
-                                                                            data:Theme.of(context).copyWith(
-                                                                              colorScheme: ThemeData().colorScheme.copyWith(
-                                                                                primary:Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            child: ozelTextField(color:Colors.purpleAccent,icon:Icons.gps_fixed,tftctr:latController,hintText: "Lat",label: "Lat")
-                                                                        ),
-
-                                                                        Theme(
-                                                                            data:Theme.of(context).copyWith(
-                                                                              colorScheme: ThemeData().colorScheme.copyWith(
-                                                                                primary:Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            child: ozelTextField(color:Colors.redAccent,icon:Icons.gps_fixed,tftctr:lngController,hintText: "Lng",label: "Lng")
-                                                                        ),
-
-                                                                        Theme(
-                                                                            data:Theme.of(context).copyWith(
-                                                                              colorScheme: ThemeData().colorScheme.copyWith(
-                                                                                primary:Colors.white,
-                                                                              ),
-                                                                            ),
-                                                                            child: ozelTextField(color:Colors.orangeAccent,icon:Icons.person,tftctr:lngController,hintText: "Kişi Sayısı",label: "Kişi Sayısı")
-                                                                        ),
-
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  actions: [
-                                                                    Padding(
-                                                                      padding: const EdgeInsets.all(0.0),
-                                                                      child: TextButton(
-                                                                        child: Text("İptal",style: TextStyle(color: Colors.white),),
-
-                                                                        onPressed: (){
-                                                                          stationController.text="";
-                                                                          latController.text="";
-                                                                          lngController.text="";
-                                                                          person_count_Controller.text="";
-                                                                          Navigator.pop(context);
-
-                                                                        },
-
-                                                                      ),
-                                                                    ),
-                                                                    TextButton(
-                                                                      child: Text("Güncelle",style: TextStyle(color: Colors.white),),
-                                                                      onPressed: () async{
-                                                                        CollectionReference stationRef=_firestore.collection('Duraklar');
-
-                                                                        await stationRef.doc(stationController.text).update({'Isim':stationController.text});
-                                                                        await stationRef.doc(stationController.text).update({'lat':latController.text});
-                                                                        await stationRef.doc(stationController.text).update({'lng':lngController.text});
-                                                                        await stationRef.doc(stationController.text).update({'KisiSayi':person_count_Controller.text});
-
-                                                                        setState(() async{
-                                                                         stationController.text="";
-                                                                          latController.text="";
-                                                                          lngController.text="";
-                                                                          person_count_Controller.text="";
-
-                                                                          Navigator.pop(context);
-                                                                        });
-
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-
-                                                            )
-                                                        ));
-                                                  },
-
-                                                )
-                                              ],
-                                              onCanceled: (){
-                                                print("Seçim yapılmadı");
-                                              },
-                                              onSelected: (menuItemValue){
-                                                if(menuItemValue==1){
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-
-                                                      SnackBar(
-                                                        content: Text("Silmek istediğinizi emin misiniz ?",style: TextStyle(fontWeight: FontWeight.bold),),
-                                                        backgroundColor: Colors.indigo,
-                                                        duration: Duration(seconds: 4),
-                                                        action: SnackBarAction(
-                                                          label: "Evet",
-                                                          textColor: Colors.white,
-                                                          onPressed: () async{
-                                                            await listofDocumentSnapshot[index].reference.delete();
-                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                              SnackBar(
-                                                                content: Text("Veri başarıyla silindi",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                                                duration: Duration(seconds: 3),
-                                                                backgroundColor: Colors.green,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),)
-                                                  );
-                                                }
-
-                                              },
-
-                                            ),
-                                          ),
-
-                                        ),
-                                        color: Colors.blueGrey,
-                                      );
-                                    },
-                                  ),
-                              ),
-                              )
-                                    ],
-                                  );
-
-                                }
-                                else{
-                                  return Center(child: CircularProgressIndicator(),);
-                                }
-
-                              }
-
-                            }
+                return SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 400,
+                        height: height2,
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: baslangicKonum,
+                          markers: Set<Marker>.of(_createMarker()),
+                          onMapCreated: (GoogleMapController controller) {
+                            haritaKontrol.complete(controller);
+                          },
                         ),
                       ),
-                    ),
 
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: SizedBox(
+                          height: height1,
+                          child: Column(
+                                  children: [
+                                     Expanded(
+                                       child: ListView.builder(
+                                          itemCount: duraklarListesi!.length,
+                                          itemBuilder: (context, index) {
+                                            var durak=duraklarListesi[index];
+                                            print("Durak adı: ${durak.durak_ad}");
+
+
+                                            return Card(
+                                              child: ListTile(
+
+                                                title: Text(
+                                                  "Durak Adı: ${durak.durak_ad}",
+                                                  style: TextStyle(color: Colors
+                                                      .black, fontSize: 24,),
+                                                  textAlign: TextAlign.center,
+
+                                                ),
+                                                subtitle: Text(
+                                                  "Lat: ${durak.lat}  lng: ${durak.lng} \nKişi sayısı: ${durak.kisi_sayisi}",
+                                                  style: TextStyle(color: Colors
+                                                      .white, fontSize: 18,),
+                                                  textAlign: TextAlign.center,
+                                                ),
+
+                                                trailing: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      0.0),
+                                                  child: PopupMenuButton(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment
+                                                          .center,
+                                                      children: [
+                                                        Icon(Icons.menu),
+                                                      ],
+                                                    ),
+                                                    itemBuilder: (context) =>
+                                                    [
+                                                      PopupMenuItem(
+                                                          value: 1,
+                                                          child: Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                    text: "Sil                      ",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .red)),
+                                                                WidgetSpan(
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .delete)),
+                                                              ],
+                                                            ),
+                                                          )
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 2,
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                  text: "Güncelle           ",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .indigoAccent)),
+                                                              WidgetSpan(
+                                                                  child: Icon(
+                                                                      Icons
+                                                                          .refresh)),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          stationController.text=durak.durak_ad;
+                                                      latController.text=durak.lat;
+                                                      lngController.text=durak.lng;
+                                                      person_count_Controller.text=durak.kisi_sayisi as String;
+
+
+                                                          Future.delayed(
+                                                              const Duration(
+                                                                  seconds: 0),
+                                                                  () =>
+                                                                  showDialog(
+                                                                      context: context,
+                                                                      builder: (
+                                                                          context) =>
+                                                                          SingleChildScrollView(
+                                                                            child: Container(
+                                                                              child: AlertDialog(
+                                                                                title: Text(
+                                                                                  "Durak Güncelleme Ekranı",
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .white,
+                                                                                      fontWeight: FontWeight
+                                                                                          .bold),),
+                                                                                backgroundColor: Colors
+                                                                                    .indigoAccent,
+                                                                                content: SizedBox(
+                                                                                  height: height3,
+                                                                                  width: width1,
+                                                                                  child: Column(
+                                                                                    children: [
+                                                                                      Theme(
+                                                                                          data: Theme
+                                                                                              .of(
+                                                                                              context)
+                                                                                              .copyWith(
+                                                                                            colorScheme: ThemeData()
+                                                                                                .colorScheme
+                                                                                                .copyWith(
+                                                                                              primary: Colors
+                                                                                                  .white,
+                                                                                            ),
+                                                                                          ),
+                                                                                          child: ozelTextField(
+                                                                                              color: Colors
+                                                                                                  .yellow,
+                                                                                              icon: Icons
+                                                                                                  .bus_alert,
+                                                                                              tftctr: stationController,
+                                                                                              hintText: "Durak adı",
+                                                                                              label: "Durak Adı")
+                                                                                      ),
+                                                                                      Theme(
+                                                                                          data: Theme
+                                                                                              .of(
+                                                                                              context)
+                                                                                              .copyWith(
+                                                                                            colorScheme: ThemeData()
+                                                                                                .colorScheme
+                                                                                                .copyWith(
+                                                                                              primary: Colors
+                                                                                                  .white,
+                                                                                            ),
+                                                                                          ),
+                                                                                          child: ozelTextField(
+                                                                                              color: Colors
+                                                                                                  .purpleAccent,
+                                                                                              icon: Icons
+                                                                                                  .gps_fixed,
+                                                                                              tftctr: latController,
+                                                                                              hintText: "Lat",
+                                                                                              label: "Lat")
+                                                                                      ),
+
+                                                                                      Theme(
+                                                                                          data: Theme
+                                                                                              .of(
+                                                                                              context)
+                                                                                              .copyWith(
+                                                                                            colorScheme: ThemeData()
+                                                                                                .colorScheme
+                                                                                                .copyWith(
+                                                                                              primary: Colors
+                                                                                                  .white,
+                                                                                            ),
+                                                                                          ),
+                                                                                          child: ozelTextField(
+                                                                                              color: Colors
+                                                                                                  .redAccent,
+                                                                                              icon: Icons
+                                                                                                  .gps_fixed,
+                                                                                              tftctr: lngController,
+                                                                                              hintText: "Lng",
+                                                                                              label: "Lng")
+                                                                                      ),
+
+                                                                                      Theme(
+                                                                                          data: Theme
+                                                                                              .of(
+                                                                                              context)
+                                                                                              .copyWith(
+                                                                                            colorScheme: ThemeData()
+                                                                                                .colorScheme
+                                                                                                .copyWith(
+                                                                                              primary: Colors
+                                                                                                  .white,
+                                                                                            ),
+                                                                                          ),
+                                                                                          child: ozelTextField(
+                                                                                              color: Colors
+                                                                                                  .orangeAccent,
+                                                                                              icon: Icons
+                                                                                                  .person,
+                                                                                              tftctr: lngController,
+                                                                                              hintText: "Kişi Sayısı",
+                                                                                              label: "Kişi Sayısı")
+                                                                                      ),
+
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                actions: [
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets
+                                                                                        .all(
+                                                                                        0.0),
+                                                                                    child: TextButton(
+                                                                                      child: Text(
+                                                                                        "İptal",
+                                                                                        style: TextStyle(
+                                                                                            color: Colors
+                                                                                                .white),),
+
+                                                                                      onPressed: () {
+
+                                                                                        stationController.text = "";
+                                                                                        latController.text = "";
+                                                                                        lngController.text = "";
+                                                                                        person_count_Controller.text = "";
+                                                                                        Navigator.pop(context);
+                                                                                      },
+
+                                                                                    ),
+                                                                                  ),
+                                                                                  TextButton(
+                                                                                    child: Text("Güncelle", style: TextStyle(color: Colors.white),),
+                                                                                    onPressed: () async {
+
+                                                                                       await durakGuncelle(durak.durak_id, stationController.text, latController.text, lngController.text,person_count_Controller.text as int);
+
+                                                                                      setState(() async {
+                                                                                        stationController.text = "";
+                                                                                        latController.text = "";
+                                                                                        lngController.text = "";
+                                                                                        person_count_Controller.text = "";
+
+                                                                                        Navigator.pop(context);
+
+                                                                                      });
+                                                                                    },
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+
+                                                                          )
+                                                                  ));
+                                                        },
+
+                                                      )
+                                                    ],
+                                                    onCanceled: () {
+                                                      print("Seçim yapılmadı");
+                                                    },
+                                                    onSelected: (
+                                                        menuItemValue) {
+                                                      if (menuItemValue == 1) {
+                                                        ScaffoldMessenger.of(
+                                                            context)
+                                                            .showSnackBar(
+
+                                                            SnackBar(
+                                                              content: Text(
+                                                                "Silmek istediğinizi emin misiniz ?",
+                                                                style: TextStyle(
+                                                                    fontWeight: FontWeight
+                                                                        .bold),),
+                                                              backgroundColor: Colors
+                                                                  .indigo,
+                                                              duration: Duration(
+                                                                  seconds: 4),
+                                                              action: SnackBarAction(
+                                                                label: "Evet",
+                                                                textColor: Colors
+                                                                    .white,
+                                                                onPressed: () async {
+
+                                                                  await durakSil(durak.durak_id);
+
+                                                                  setState(() {
+                                                                    duraklarListesi.removeAt(index);
+                                                                  });
+
+                                                                  ScaffoldMessenger.of(context)
+                                                                      .showSnackBar(
+                                                                    SnackBar(
+                                                                      content: Text(
+                                                                        "Veri başarıyla silindi",
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            fontWeight: FontWeight
+                                                                                .bold),),
+                                                                      duration: Duration(
+                                                                          seconds: 3),
+                                                                      backgroundColor: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ),)
+                                                        );
+                                                      }
+                                                    },
+
+                                                  ),
+                                                ),
+
+                                              ),
+                                              color: Colors.blueGrey,
+                                            );
+                                          },
+                                        ),
+                                     ),
+
+                                  ],
+                                )
+
+                        ),
+                      ),
+
+                    ],
+                  ),
+
                 ),
-
-            ),
-          ),
 
         );
       }
-      else{
-        return Center(child: CircularProgressIndicator());
-      }
 
-
-
-        }
-    );
-
+          else{
+            return CircularProgressIndicator();
+           }
+    }
+  )
+  );
   }
 }
 
