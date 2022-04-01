@@ -102,7 +102,7 @@ class _GirisSayfaState extends State<GirisSayfa> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Kg()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => KullaniciGiris()));
                     },
                     child: Text("Kullanıcı Giriş",
                       style: TextStyle(

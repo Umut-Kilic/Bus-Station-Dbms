@@ -5,7 +5,5 @@ class Kisiler{
   String password;
   String role;
 
-
-
   Kisiler(this.kisi_id, this.userName, this.email, this.password, this.role);
 }

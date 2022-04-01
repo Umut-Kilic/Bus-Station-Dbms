@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/AdminHome.dart';
-import 'package:yazlab2_proje2/AdminPanelUser.dart';
+import 'package:yazlab2_proje2/database/Kisilerdao.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +28,6 @@ class AdminGiris extends StatefulWidget {
 }
 
 class _AdminGirisState extends State<AdminGiris> {
-  final adminU = "Umut";
-  final adminP = "Goksel";
 
   final GlobalKey<FormState> _formKey= GlobalKey<FormState>();
 
@@ -50,6 +48,7 @@ class _AdminGirisState extends State<AdminGiris> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Admin Giriş Sayfası"),
+          centerTitle: true,
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -84,10 +83,12 @@ class _AdminGirisState extends State<AdminGiris> {
                   width: width1,
                   height: height4,
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async{
                       if(_formKey.currentState!.validate()){
 
-                        if(nameController.text==adminU && passwordController.text==adminP){
+                        bool sonuc= await Kisilerdao().admingiris(nameController.text, passwordController.text);
+
+                        if(sonuc){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => AdminHome()));
                           nameController.text="";
                           passwordController.text="";

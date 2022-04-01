@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:yazlab2_proje2/GirisSayfa.dart';
@@ -9,35 +8,7 @@ import 'package:yazlab2_proje2/kayitOl.dart';
 import 'database/Kisiler.dart';
 import 'database/Kisilerdao.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(Kg());
-}
-
-class Kg extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: FutureBuilder(
-            future: _initialization,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text("Beklenmeyen bir haa ortaya çıktı"));
-              } else if (snapshot.hasData) {
-                return KullaniciGiris();
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            }));
-  }
-}
 
 class KullaniciGiris extends StatefulWidget {
   const KullaniciGiris({Key? key}) : super(key: key);
@@ -105,7 +76,6 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
     //rastgeleGetir();
   }
 
-  final _firestore = FirebaseFirestore.instance;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -113,33 +83,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
 
   final GlobalKey<FormState> _formKey= GlobalKey<FormState>();
 
-  getDocumentData(ad, sifre) async {
-    CollectionReference userRef = _firestore.collection('Kisiler');
-    QuerySnapshot querySnapshot = await userRef.get();
-    final _docData = querySnapshot.docs.map((doc) => doc.data()).toList();
 
-    List liste = [];
-    for (int i = 0; i < _docData.length; i++) {
-      liste.add(_docData[i]);
-    }
-    bool usernameBool = false;
-    bool passwordBool = false;
-
-    for (int i = 0; i < liste.length; i++) {
-      print(liste[i]['Name'] + "    " + liste[i]['Password']);
-      if (liste[i]['Name'] == ad) {
-        usernameBool = true;
-      }
-      if (liste[i]['Password'] == sifre) {
-        passwordBool = true;
-      }
-    }
-    if (usernameBool && passwordBool) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   Color mBackgroundColor = Color(0xFFFFFFFF);
 
@@ -158,7 +102,6 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
     final height3 = MediaQuery.of(context).size.height * 0.05;
     final height4 = MediaQuery.of(context).size.height * 0.07;
 
-    CollectionReference userRef = _firestore.collection('Kisiler');
 
     return Scaffold(
       appBar: AppBar(
@@ -256,13 +199,17 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                 color: mPrimaryColor,
                 onPressed: () async {
                  if(_formKey.currentState!.validate()){
-                   bool sonuc = await getDocumentData(nameController.text, passwordController.text);
+
+                   bool sonuc=await Kisilerdao().girisYap(nameController.text, passwordController.text);
+                   print(sonuc);
+
                    if (sonuc) {
                      Navigator.push(context,
                          MaterialPageRoute(builder: (context) => UserDisplay()));
                      nameController.text = "";
                      passwordController.text = "";
-                   } else {
+                   }
+                   else {
                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                          backgroundColor: Colors.white,
                          content: Text(
@@ -275,6 +222,7 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                      nameController.text = "";
                      passwordController.text = "";
                    }
+
                  }
 
                 },
