@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:splash_screen_view/SplashScreenView.dart';
 import 'package:yazlab2_proje2/AdminGiris.dart';
 import 'package:yazlab2_proje2/KullaniciGiris.dart';
 

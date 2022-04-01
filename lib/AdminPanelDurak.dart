@@ -1,7 +1,6 @@
 
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yazlab2_proje2/database/Duraklar.dart';
@@ -93,29 +92,28 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   TextEditingController person_count_Controller=TextEditingController();
 
 
-  Future<void> durakEkle(durakRef) async {
-    Map<String,dynamic> stationData={'Isim':stationController.text,'lat':latController.text,'lng':lngController.text,'KisiSayisi':person_count_Controller.text};
-    await durakRef.doc(stationController.text).set(stationData);
-    Navigator.pop(context);  // pop current page
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
+  Future<void> durakEkle(String stationName,String lat,String lng) async{
 
-  }
-
-  Future<void> durakEklee(String stationName,String lat,String lng,int kisi_sayisi) async{
-
-    await Duraklardao().durakEkle(stationName, lat, lng, kisi_sayisi);
+    await Duraklardao().durakEkle(stationName, lat, lng,0);
 
 
     Navigator.pop(context);  // pop current page
     Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminPanelDurak()));
   }
 
-  Future<void> durakGuncelle(durakRef) async {
-    await durakRef.doc(stationController.text).update({'Isim':stationController.text});
-    await durakRef.doc(stationController.text).update({'lat':latController.text});
-    await durakRef.doc(stationController.text).update({'lng':lngController.text});
-    await durakRef.doc(stationController.text).update({'KisiSayisi':person_count_Controller.text});
+  Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
+
+    await Duraklardao().durakKisiEkle(durak_id,kisi_sayisi);
+
   }
+
+  Future<void> durakKisiSifirla(int durak_id) async{
+
+    await Duraklardao().durakKisiSifirla(durak_id);
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +121,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
     final width1 = MediaQuery.of(context).size.width * 0.37;
 
-    final height1 = MediaQuery.of(context).size.height * 0.50;
+    final height1 = MediaQuery.of(context).size.height * 0.40;
     final height2 = MediaQuery.of(context).size.height * 0.60;
 
     return FutureBuilder<dynamic> (
@@ -206,16 +204,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                       child: ozelTextField(color:Colors.redAccent,icon:Icons.gps_not_fixed,tftctr:lngController,hintText: "Lng",label: "Lng:")
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  child: Theme(
-                                                      data:Theme.of(context).copyWith(
-                                                        colorScheme: ThemeData().colorScheme.copyWith(
-                                                          primary:Colors.white,
-                                                        ),
-                                                      ),
-                                                      child: ozelTextField(color:Colors.green,icon:Icons.person,tftctr:person_count_Controller,hintText: "Duraktaki kişi sayısı",label: "Kişi sayısı:")
-                                                  ),
-                                                )
+
                                               ],
                                             ),
                                           ),
@@ -229,7 +218,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                   stationController.text="";
                                                   latController.text="";
                                                   lngController.text="";
-                                                  person_count_Controller.text="";
                                                   Navigator.pop(context);
 
                                                 },
@@ -240,14 +228,14 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                               child: Text("Durak Ekle",style: TextStyle(color: Colors.white),),
                                               onPressed: () async {
 
+                                                durakEkle(stationController.text, latController.text, lngController.text);
+
                                                 setState(() async{
 
-                                                  durakEklee(stationController.text, latController.text, lngController.text, int.parse(person_count_Controller.text));
 
                                                   stationController.text="";
                                                   latController.text="";
                                                   lngController.text="";
-                                                  person_count_Controller.text="";
 
                                                   Navigator.pop(context);
 
@@ -286,10 +274,135 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDurakIslemleri()));
 
-
-
                         },
                         child: Text("Durak Listele",style: TextStyle(color: Colors.white)),
+                      ),
+                      ElevatedButton(
+                        onPressed: (){
+                          Future.delayed(
+                              const Duration(seconds: 0),
+                                  () => showDialog(
+                                  context: context,
+                                  builder: (context) => SingleChildScrollView(
+                                    child: Container(
+                                      child: AlertDialog(
+                                        title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                        backgroundColor: Colors.orangeAccent,
+                                        content: SizedBox(
+                                          height: height1,
+                                          width: width1,
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+
+                                                child: Theme(
+                                                    data:Theme.of(context).copyWith(
+                                                      colorScheme: ThemeData().colorScheme.copyWith(
+                                                        primary:Colors.white,
+                                                      ),
+                                                    ),
+                                                    child: ozelTextField(color:Colors.indigo,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+                                                ),
+                                              ),
+
+
+                                              Expanded(
+                                                child: Theme(
+                                                    data:Theme.of(context).copyWith(
+                                                      colorScheme: ThemeData().colorScheme.copyWith(
+                                                        primary:Colors.white,
+                                                      ),
+                                                    ),
+                                                    child: ozelTextField(color:Colors.green,icon:Icons.person,tftctr:person_count_Controller,hintText: "Duraktaki kişi sayısı",label: "Kişi sayısı:")
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(0.0),
+                                            child: TextButton(
+                                              child: Text("İptal",style: TextStyle(color: Colors.white),),
+
+                                              onPressed: (){
+                                                person_count_Controller.text="";
+                                                Navigator.pop(context);
+
+                                              },
+
+                                            ),
+                                          ),
+                                          TextButton(
+                                            child: Text("Duraktaki kişileri sıfırla",style: TextStyle(color: Colors.white),),
+                                            onPressed: () async {
+                                              int id=await Duraklardao().durakIDGetir(stationController.text);
+
+                                              if(id>0){
+                                                await durakKisiSifirla(id);
+
+                                                setState(() async{
+
+                                                  stationController.text="";
+
+                                                  Navigator.pop(context);
+
+                                                });
+                                              }
+                                              else{
+                                                /*ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: (){
+                                                      return Text("asfsfa");
+                                                    }),
+                                                );*/
+                                              }
+
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text("Kişi ekle",style: TextStyle(color: Colors.white),),
+                                            onPressed: () async {
+                                              int id=await Duraklardao().durakIDGetir(stationController.text);
+
+                                              if(id>0){
+                                                await durakKisiEkle(id, int.parse(person_count_Controller.text));
+
+                                                setState(() async{
+
+                                                  stationController.text="";
+
+                                                  Navigator.pop(context);
+
+                                                });
+                                              }
+                                              else{
+                                                /*ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: (){
+                                                      return Text("asfsfa");
+                                                    }),
+                                                );*/
+                                              }
+
+
+
+                                            },
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+
+                                  )
+                              ));
+                        },
+                        child: Text("Durak Kişi Ekle/Çıkar",style: TextStyle(color: Colors.white)),
+                      ),
+                      ElevatedButton(
+                        onPressed: (){
+                          //Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDurakIslemleri()));
+
+                        },
+                        child: Text("Durak Tablo",style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -299,7 +412,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
             );
           }
           else{
-            print("Bekleeeee");
             return Center(child: CircularProgressIndicator());
           }
 

@@ -33,6 +33,7 @@ dependencies:
   google_maps_flutter: ^2.1.3
   firebase_auth: ^3.3.11
   firebase_core: ^1.13.1
+  splash_screen_view: ^3.0.0
 
 
 
@@ -96,3 +97,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+splash_screen_view:
+  color: "#ffffff"
+  background_image: "resimler/kocaeli.png"

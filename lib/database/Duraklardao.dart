@@ -22,7 +22,7 @@ class Duraklardao{
 
   }
 
-  Future<void> durakEkle(String stationName,String  lat,String lng,int kisi_sayisi) async{
+  Future<void> durakEkle(String stationName,String  lat,String lng,int person_count) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
 
@@ -30,8 +30,61 @@ class Duraklardao{
     bilgiler["durak_ad"]=stationName;
     bilgiler["lat"]=lat;
     bilgiler["lng"]=lng;
-    bilgiler["kisi_sayisi"]=kisi_sayisi;
+    bilgiler["kisi_sayisi"]=person_count;
     await db.insert("Duraklar", bilgiler);
+
+
+  }
+
+
+  Future<int> durakIDGetir(String station_name) async{
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Duraklar");
+
+    List<Duraklar> liste=[];
+
+    List.generate(maps.length, (index) {
+
+      var satir=maps[index];
+
+      liste.add(Duraklar(satir['durak_id'], satir['durak_ad'], satir['lat'], satir['lng'], satir['kisi_sayisi']));
+
+
+    });
+
+    for(int i=0;i<liste.length;i++){
+      if(liste[i].durak_ad==station_name){
+        return liste[i].durak_id;
+      }
+    }
+    return 0;
+
+  }
+
+  Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Duraklar Where durak_id=$durak_id");
+
+    int kisi=maps[0]["kisi_sayisi"];
+    kisi+=kisi_sayisi;
+    var bilgiler=Map<String,dynamic>();
+    bilgiler["kisi_sayisi"]= kisi;
+    await db.update("Duraklar", bilgiler,where: "durak_id=?",whereArgs: [durak_id]);
+
+  }
+
+  Future<void> durakKisiSifirla(int durak_id) async{
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    var bilgiler=Map<String,dynamic>();
+
+    bilgiler["kisi_sayisi"]=0;
+    await db.update("Duraklar", bilgiler,where: "durak_id=?",whereArgs: [durak_id]);
 
 
   }

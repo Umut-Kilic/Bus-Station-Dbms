@@ -1,49 +1,9 @@
 
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(User());
-}
-
-
-class User extends StatelessWidget {
-
-  final Future<FirebaseApp> _initialization=Firebase.initializeApp();
-
-
-  @override
-  Widget build(BuildContext context) {
-
-
-    return MaterialApp(
-
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: FutureBuilder(
-            future: _initialization,
-            builder: (context,snapshot){
-              if(snapshot.hasError){
-                return Center(child: Text("Beklenmeyen bir haa ortaya çıktı"));
-              }
-              else if(snapshot.hasData){
-                return UserDisplay();
-              }
-              else{
-                return Center(child: CircularProgressIndicator());
-              }
-            }
-        )
-
-    );
-  }
-}
 
 class UserDisplay extends StatefulWidget {
   const UserDisplay({Key? key}) : super(key: key);
@@ -53,6 +13,10 @@ class UserDisplay extends StatefulWidget {
 }
 
 class _UserDisplayState extends State<UserDisplay> {
+
+  TextEditingController stationController=TextEditingController();
+  TextEditingController latController=TextEditingController();
+  TextEditingController lngController=TextEditingController();
 
   late BitmapDescriptor konumIcon;
 
@@ -93,36 +57,157 @@ class _UserDisplayState extends State<UserDisplay> {
 
   @override
   Widget build(BuildContext context) {
+
+    final width1 = MediaQuery.of(context).size.width * 0.37;
+
+    final height1 = MediaQuery.of(context).size.height * 0.13;
+    final height2 = MediaQuery.of(context).size.height * 0.60;
+
     iconOlustur(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Kullanıcı Ekranı"),
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: 400,
-              height: 300,
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: baslangicKonum,
-                markers: Set<Marker>.of(isaretler),
-                onMapCreated: (GoogleMapController controller){
-                  haritaKontrol.complete(controller);
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                width: 400,
+                height: 300,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: baslangicKonum,
+                  markers: Set<Marker>.of(isaretler),
+                  onMapCreated: (GoogleMapController controller){
+                    haritaKontrol.complete(controller);
+                  },
+                ),
+              ),
+              RaisedButton(
+                child: Text("Konuma Git"),
+                onPressed: (){
+                  konumaGit();
                 },
               ),
-            ),
-            RaisedButton(
-              child: Text("Konuma Git"),
-              onPressed: (){
-                konumaGit();
-              },
-            ),
-          ],
+              ElevatedButton(
+                  onPressed: (){
+
+                    Future.delayed(
+                        const Duration(seconds: 0),
+                            () => showDialog(
+                            context: context,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                child: AlertDialog(
+                                  title: Text("Durak Seçme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                  backgroundColor: Colors.orangeAccent,
+                                  content: SizedBox(
+                                    height: height1,
+                                    width: width1,
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+
+                                          child: Theme(
+                                              data:Theme.of(context).copyWith(
+                                                colorScheme: ThemeData().colorScheme.copyWith(
+                                                  primary:Colors.white,
+                                                ),
+                                              ),
+                                              child: ozelTextField(color:Colors.indigo,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+                                          ),
+                                        ),
+
+
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: TextButton(
+                                        child: Text("İptal",style: TextStyle(color: Colors.white),),
+
+                                        onPressed: (){
+                                          stationController.text="";
+                                          latController.text="";
+                                          lngController.text="";
+                                          Navigator.pop(context);
+
+                                        },
+
+                                      ),
+                                    ),
+                                    TextButton(
+                                      child: Text("Durak Seç",style: TextStyle(color: Colors.white),),
+                                      onPressed: () async {
+
+
+                                        setState(() async{
+
+
+                                          stationController.text="";
+                                          latController.text="";
+                                          lngController.text="";
+
+                                          Navigator.pop(context);
+
+                                        });
+
+                                      },
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+
+                            )
+                        ));
+                  },
+                  child: Text("Durak Seç"))
+            ],
+          ),
         ),
       ),
 
     );
   }
 }
+
+Widget ozelTextField({color,icon,tftctr,hintText,label,obsureText = false,}){
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label,style:TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87
+      ),),
+      SizedBox(height: 5,),
+      TextField(
+        controller: tftctr,
+        obscureText: obsureText,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: color,
+          prefixIcon: Icon(icon),
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey)
+          ),
+        ),
+      ),
+      SizedBox(height: 10,)
+
+    ],
+  );
+}
+
