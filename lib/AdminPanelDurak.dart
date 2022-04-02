@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yazlab2_proje2/AdminTablo.dart';
 import 'package:yazlab2_proje2/database/DurakKisidao.dart';
 import 'package:yazlab2_proje2/database/Duraklar.dart';
 import 'package:yazlab2_proje2/database/Duraklardao.dart';
@@ -118,6 +119,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
   List<String> durakAdlar=[];
+  String secilenDurak="";
   Future<void> durakAdGetir() async{
 
     durakAdlar=await Duraklardao().durakAdGetir();
@@ -133,7 +135,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
   }
 
-  String? secilenDurak;
+
 
 
 
@@ -326,35 +328,28 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                     borderRadius: BorderRadius.circular(12),
                                                     border: Border.all(color: Colors.black,width: 4),
                                                   ),
-                                                  child: Theme(
-                                                    data:Theme.of(context).copyWith(
-                                                      colorScheme: ThemeData().colorScheme.copyWith(
-                                                        primary:Colors.white,
-                                                      ),
-                                                    ),
-                                                    child: DropdownButtonHideUnderline(
-                                                      child: DropdownButton<String>(
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton<String>(
 
-                                                        value: secilenDurak,
-                                                        icon: Icon(Icons.arrow_drop_down),
-                                                        iconSize: 36,
-                                                        items: durakAdlar.map<DropdownMenuItem<String>>((String value){
-                                                          return DropdownMenuItem<String>(
-                                                            value: value,
-                                                            child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
+                                                      onChanged: (String? secilenVeri){
+                                                        print("secilen veri $secilenVeri");
+                                                        setState(() {
+                                                          secilenDurak=secilenVeri!;
 
-                                                          );
-                                                        }).toList(),
+                                                        });
+                                                      },
+                                                      value: secilenDurak,
+                                                      icon: Icon(Icons.arrow_drop_down),
+                                                      iconSize: 36,
+                                                      items: durakAdlar.map<DropdownMenuItem<String>>((String value){
+                                                        return DropdownMenuItem<String>(
+                                                          value: value,
+                                                          child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
 
-                                                        onChanged: (String? secilenVeri){
-                                                          print("secilen veri $secilenVeri");
-                                                          setState(() {
-                                                            secilenDurak=secilenVeri;
+                                                        );
+                                                      }).toList(),
 
-                                                          });
-                                                        },
 
-                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -391,7 +386,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                           TextButton(
                                             child: Text("Duraktaki kişileri sıfırla",style: TextStyle(color: Colors.white),),
                                             onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(secilenDurak!);
+                                              int id=await Duraklardao().durakIDGetir(secilenDurak);
 
                                               if(id>0){
                                                 await durakKisiSifirla(id);
@@ -417,7 +412,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                           TextButton(
                                             child: Text("Kişi ekle",style: TextStyle(color: Colors.white),),
                                             onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(secilenDurak!);
+                                              int id=await Duraklardao().durakIDGetir(secilenDurak);
 
                                               if(id>0){
                                                 await durakKisiEkle(id, int.parse(person_count_Controller.text));
@@ -455,7 +450,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                       ),
                       ElevatedButton(
                         onPressed: (){
-                          //Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDurakIslemleri()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminTablo()));
 
                         },
                         child: Text("Durak Tablo",style: TextStyle(color: Colors.white)),
