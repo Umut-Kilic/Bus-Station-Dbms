@@ -1,4 +1,5 @@
 import 'package:yazlab2_proje2/database/Duraklar.dart';
+import 'package:yazlab2_proje2/database/Duraklardao.dart';
 import 'package:yazlab2_proje2/database/Kisiler.dart';
 
 import 'DurakKisi.dart';
@@ -23,6 +24,45 @@ class DurakKisidao{
 
 
     });
+
+  }
+
+
+  Future<void> DuragaKisiEkle(String stationName,String username) async{
+
+    int user_id=0;
+    int durak_id=await Duraklardao().durakIDGetir(stationName);
+
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Kisiler");
+
+    List.generate(maps.length, (index) {
+
+      var satir=maps[index];
+
+      if(satir['username']==username ){
+        user_id= satir['kisi_id'];
+
+      }
+
+    });
+
+    if(durak_id!=0 && user_id!=0 ) {
+      var bilgiler = Map<String, dynamic>();
+      bilgiler["durak_id"] = durak_id;
+      bilgiler["kisi_id"] = user_id;
+      await db.insert("DurakKisi", bilgiler);
+      await Duraklardao().durakKisiEkle(durak_id,1);
+    }
+
+  }
+
+  Future<void> duraktakiKisileriSfirla(int durak_id) async{
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    await db.delete("DurakKisi", where: "durak_id=?",whereArgs: [durak_id]);
 
   }
 

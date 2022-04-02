@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yazlab2_proje2/database/DurakKisidao.dart';
 import 'package:yazlab2_proje2/database/Duraklar.dart';
 import 'package:yazlab2_proje2/database/Duraklardao.dart';
 
@@ -110,8 +111,26 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Future<void> durakKisiSifirla(int durak_id) async{
 
     await Duraklardao().durakKisiSifirla(durak_id);
+    await DurakKisidao().duraktakiKisileriSfirla(durak_id);
 
   }
+
+
+
+  List<String> durakAdlar=[];
+  Future<void> durakAdGetir() async{
+
+    durakAdlar=await Duraklardao().durakAdGetir();
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    durakAdGetir();
+  }
+
+  String? secilenDurak;
 
 
 
@@ -121,8 +140,9 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
     final width1 = MediaQuery.of(context).size.width * 0.37;
 
-    final height1 = MediaQuery.of(context).size.height * 0.40;
+    final height1 = MediaQuery.of(context).size.height * 0.36;
     final height2 = MediaQuery.of(context).size.height * 0.60;
+    final height3 = MediaQuery.of(context).size.height * 0.25;
 
     return FutureBuilder<dynamic> (
       future: getBusStation(),
@@ -286,22 +306,53 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                   builder: (context) => SingleChildScrollView(
                                     child: Container(
                                       child: AlertDialog(
-                                        title: Text("Durak Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                        title: Text("Durağa Kişi Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                                         backgroundColor: Colors.orangeAccent,
                                         content: SizedBox(
-                                          height: height1,
+                                          height: height3,
                                           width: width1,
                                           child: Column(
                                             children: [
-                                              Expanded(
-
-                                                child: Theme(
+                                              SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Container(
+                                                  margin: EdgeInsets.symmetric(vertical: 16),
+                                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(12),
+                                                    border: Border.all(color: Colors.black,width: 4),
+                                                  ),
+                                                  child: Theme(
                                                     data:Theme.of(context).copyWith(
                                                       colorScheme: ThemeData().colorScheme.copyWith(
                                                         primary:Colors.white,
                                                       ),
                                                     ),
-                                                    child: ozelTextField(color:Colors.indigo,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+                                                    child: DropdownButtonHideUnderline(
+                                                      child: DropdownButton<String>(
+
+                                                        value: durakAdlar[0],
+                                                        icon: Icon(Icons.arrow_drop_down),
+                                                        iconSize: 36,
+                                                        items: durakAdlar.map<DropdownMenuItem<String>>((String value){
+                                                          return DropdownMenuItem<String>(
+                                                            value: value,
+                                                            child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
+
+                                                          );
+                                                        }).toList(),
+
+                                                        onChanged: (String? secilenVeri){
+                                                          setState(() {
+                                                            secilenDurak=secilenVeri;
+
+                                                          });
+                                                        },
+
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
 
@@ -336,14 +387,14 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                           TextButton(
                                             child: Text("Duraktaki kişileri sıfırla",style: TextStyle(color: Colors.white),),
                                             onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(stationController.text);
+                                              int id=await Duraklardao().durakIDGetir(secilenDurak!);
 
                                               if(id>0){
                                                 await durakKisiSifirla(id);
 
                                                 setState(() async{
 
-                                                  stationController.text="";
+
 
                                                   Navigator.pop(context);
 
@@ -362,7 +413,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                           TextButton(
                                             child: Text("Kişi ekle",style: TextStyle(color: Colors.white),),
                                             onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(stationController.text);
+                                              int id=await Duraklardao().durakIDGetir(secilenDurak!);
 
                                               if(id>0){
                                                 await durakKisiEkle(id, int.parse(person_count_Controller.text));

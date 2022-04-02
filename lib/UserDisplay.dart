@@ -15,13 +15,10 @@ class UserDisplay extends StatefulWidget {
   @override
   State<UserDisplay> createState() => _UserDisplayState();
 }
-GoogleMapController? mapController;
+
 
 class _UserDisplayState extends State<UserDisplay> {
-
-  TextEditingController stationController=TextEditingController();
-  TextEditingController latController=TextEditingController();
-  TextEditingController lngController=TextEditingController();
+  GoogleMapController? mapController;
 
   late BitmapDescriptor konumIcon;
 
@@ -60,10 +57,29 @@ class _UserDisplayState extends State<UserDisplay> {
 
   }
 
+
+  List<String> durakAdlar=[];
+  Future<void> durakAdGetir() async{
+
+    durakAdlar=await Duraklardao().durakAdGetir();
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    durakAdGetir();
+  }
+
+  String? secilenDurak;
+
+
+
   @override
   Widget build(BuildContext context) {
 
     final width1 = MediaQuery.of(context).size.width * 0.37;
+    final width2 = MediaQuery.of(context).size.width * 0.95;
 
     final height1 = MediaQuery.of(context).size.height * 0.13;
     final height2 = MediaQuery.of(context).size.height * 0.60;
@@ -71,7 +87,9 @@ class _UserDisplayState extends State<UserDisplay> {
     iconOlustur(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kullanıcı Ekranı"),
+        backgroundColor: Colors.orangeAccent,
+        title: Text("Kullanıcı Ekranı",style: TextStyle(fontSize: 24),),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -94,7 +112,7 @@ class _UserDisplayState extends State<UserDisplay> {
                   },
                 ),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Konuma Git"),
                 onPressed: (){
                   konumaGit();
@@ -111,21 +129,54 @@ class _UserDisplayState extends State<UserDisplay> {
                               child: Container(
                                 child: AlertDialog(
                                   title: Text("Durak Seçme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                  backgroundColor: Colors.orangeAccent,
+                                  backgroundColor: Colors.red,
                                   content: SizedBox(
                                     height: height1,
-                                    width: width1,
+                                    width: width2,
                                     child: Column(
                                       children: [
                                         Expanded(
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Container(
+                                              margin:EdgeInsets.symmetric(vertical: 16),
+                                              padding: EdgeInsets.symmetric(horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(12),
+                                                border: Border.all(color: Colors.black,width: 4),
+                                              ),
+                                              child: Theme(
+                                                data:Theme.of(context).copyWith(
+                                                  colorScheme: ThemeData().colorScheme.copyWith(
+                                                    primary:Colors.white,
+                                                  ),
+                                                ),
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton<String>(
 
-                                          child: Theme(
-                                              data:Theme.of(context).copyWith(
-                                                colorScheme: ThemeData().colorScheme.copyWith(
-                                                  primary:Colors.white,
+                                                    value: durakAdlar[0],
+                                                    icon: Icon(Icons.arrow_drop_down),
+                                                    iconSize: 36,
+                                                    items: durakAdlar.map<DropdownMenuItem<String>>((String value){
+                                                      return DropdownMenuItem<String>(
+                                                        value: value,
+                                                        child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
+
+                                                      );
+                                                    }).toList(),
+
+                                                    onChanged: (String? secilenVeri){
+                                                      setState(() {
+                                                        secilenDurak=secilenVeri;
+
+                                                      });
+                                                    },
+
+                                                  ),
                                                 ),
                                               ),
-                                              child: ozelTextField(color:Colors.indigo,icon:Icons.bus_alert,tftctr:stationController,hintText: "Durak ismini giriniz",label: "Durak ismi")
+                                            ),
                                           ),
                                         ),
 
@@ -140,9 +191,6 @@ class _UserDisplayState extends State<UserDisplay> {
                                         child: Text("İptal",style: TextStyle(color: Colors.white),),
 
                                         onPressed: (){
-                                          stationController.text="";
-                                          latController.text="";
-                                          lngController.text="";
                                           Navigator.pop(context);
 
                                         },
@@ -152,12 +200,12 @@ class _UserDisplayState extends State<UserDisplay> {
                                     TextButton(
                                       child: Text("Durak Seç",style: TextStyle(color: Colors.white),),
                                       onPressed: () async {
-                                        String hangidurak=stationController.text;
+                                        String hangidurak=secilenDurak!;
                                         print("durak:");
                                         print(hangidurak);
-                                        await Duraklardao().DuragaAgaEkle(hangidurak,widget.username);
+                                        await DurakKisidao().DuragaKisiEkle(hangidurak,widget.username);
                                         var location=[];
-                                        location=await Duraklardao().durakLATLNGgetir(hangidurak);
+                                        location=await Duraklardao().durakLatLngGetir(hangidurak);
                                         if(!location.isEmpty){
                                           print("location knk");
                                           print(location[0]);
@@ -173,10 +221,6 @@ class _UserDisplayState extends State<UserDisplay> {
                                           var gidilecekKonum = CameraPosition(target: LatLng(double.parse(location[0]),double.parse(location[1])),zoom: 8,);
 
                                           controller.animateCamera(CameraUpdate.newCameraPosition(gidilecekKonum));
-
-                                          stationController.text="";
-                                          latController.text="";
-                                          lngController.text="";
 
                                           Navigator.pop(context);
 
