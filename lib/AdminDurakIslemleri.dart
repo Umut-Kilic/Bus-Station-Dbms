@@ -211,7 +211,7 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
                                                           stationController.text=durak.durak_ad;
                                                       latController.text=durak.lat;
                                                       lngController.text=durak.lng;
-                                                      person_count_Controller.text=durak.kisi_sayisi as String;
+                                                      person_count_Controller.text=(durak.kisi_sayisi).toString();
 
 
                                                           Future.delayed(
@@ -356,7 +356,7 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
                                                                                     child: Text("Güncelle", style: TextStyle(color: Colors.white),),
                                                                                     onPressed: () async {
 
-                                                                                       await durakGuncelle(durak.durak_id, stationController.text, latController.text, lngController.text,person_count_Controller.text as int);
+                                                                                       await durakGuncelle(durak.durak_id, stationController.text, latController.text, lngController.text,int.parse(person_count_Controller.text));
 
                                                                                       setState(() async {
                                                                                         stationController.text = "";

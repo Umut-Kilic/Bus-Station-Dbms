@@ -121,13 +121,16 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   Future<void> durakAdGetir() async{
 
     durakAdlar=await Duraklardao().durakAdGetir();
+    secilenDurak=durakAdlar[0];
 
   }
+
 
   @override
   void initState() {
     super.initState();
     durakAdGetir();
+
   }
 
   String? secilenDurak;
@@ -332,7 +335,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                     child: DropdownButtonHideUnderline(
                                                       child: DropdownButton<String>(
 
-                                                        value: durakAdlar[0],
+                                                        value: secilenDurak,
                                                         icon: Icon(Icons.arrow_drop_down),
                                                         iconSize: 36,
                                                         items: durakAdlar.map<DropdownMenuItem<String>>((String value){
@@ -344,6 +347,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                         }).toList(),
 
                                                         onChanged: (String? secilenVeri){
+                                                          print("secilen veri $secilenVeri");
                                                           setState(() {
                                                             secilenDurak=secilenVeri;
 
@@ -421,6 +425,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                                 setState(() async{
 
                                                   stationController.text="";
+                                                  person_count_Controller.text="";
 
                                                   Navigator.pop(context);
 

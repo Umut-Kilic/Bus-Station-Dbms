@@ -144,6 +144,7 @@ class Duraklardao{
 
   }
 
+
   Future<void> durakSil(int durak_id) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
