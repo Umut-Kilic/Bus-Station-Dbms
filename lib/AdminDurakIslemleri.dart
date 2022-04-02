@@ -321,7 +321,7 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
                                                                                                   .orangeAccent,
                                                                                               icon: Icons
                                                                                                   .person,
-                                                                                              tftctr: lngController,
+                                                                                              tftctr: person_count_Controller,
                                                                                               hintText: "Kişi Sayısı",
                                                                                               label: "Kişi Sayısı")
                                                                                       ),
