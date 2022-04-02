@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yazlab2_proje2/database/DurakKisidao.dart';
 
 import 'database/Duraklar.dart';
 import 'database/Duraklardao.dart';
@@ -84,6 +85,7 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
 
   Future<void> durakSil(int durak_id) async {
     await Duraklardao().durakSil(durak_id);
+    await DurakKisidao().durakKisiSil(durak_id);
   }
 
 

@@ -150,7 +150,6 @@ class Duraklardao{
     var db = await VeritabaniYardimcisi.veritabaniErisim();
 
 
-//birden fazla parametrede whereargsa yollayabılrıız where durakid=? and durak_ad =? gibi
     await db.delete("Duraklar", where: "durak_id = ?",whereArgs: [durak_id]);
 
   }
@@ -169,7 +168,29 @@ class Duraklardao{
 
   }
 
+  Future<List<List>> durakKisiSayisiGetir() async{
 
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Duraklar ");
+
+    List<String> stationName=[];
+    List<int> passangerCount=[];
+
+    List.generate(maps.length, (index) {
+
+      var satir=maps[index];
+
+      stationName.add(satir['durak_ad']);
+      passangerCount.add(satir['kisi_sayisi']);
+
+    });
+    List<List<dynamic>> listem=[];
+    listem.add(stationName);
+    listem.add(passangerCount);
+    return listem;
+
+  }
 
 
   Future<int> kayitKontrol(String stationName) async{

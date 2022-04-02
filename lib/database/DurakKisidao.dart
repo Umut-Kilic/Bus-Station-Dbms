@@ -66,6 +66,12 @@ class DurakKisidao{
 
   }
 
+  Future<void> durakKisiSil(int durak_id) async{
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    await db.delete("DurakKisi", where: "durak_id=?",whereArgs: [durak_id]);
+  }
+
 
 
 }
