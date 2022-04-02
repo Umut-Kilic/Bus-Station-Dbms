@@ -3,11 +3,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'database/Duraklardao.dart';
+import 'database/DurakKisidao.dart';
+import 'database/Kisiler.dart';
+import 'database/Kisilerdao.dart';
 
 class UserDisplay extends StatefulWidget {
-  const UserDisplay({Key? key}) : super(key: key);
 
+  String username="adasd";
+  UserDisplay({Key? key, required this.username}) : super(key: key);
   @override
   State<UserDisplay> createState() => _UserDisplayState();
 }
@@ -142,11 +146,12 @@ class _UserDisplayState extends State<UserDisplay> {
                                     TextButton(
                                       child: Text("Durak Seç",style: TextStyle(color: Colors.white),),
                                       onPressed: () async {
-
+                                        String hangidurak=stationController.text;
+                                        print("durak:");
+                                        print(hangidurak);
+                                        await Duraklardao().DuragaAgaEkle(hangidurak,widget.username);
 
                                         setState(() async{
-
-
                                           stationController.text="";
                                           latController.text="";
                                           lngController.text="";

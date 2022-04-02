@@ -37,6 +37,39 @@ class Duraklardao{
   }
 
 
+  Future<void> DuragaAgaEkle(String stationName,String username) async{
+
+    int user_id=0;
+    int durak_id=await durakIDGetir(stationName);
+
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Kisiler");
+
+    List.generate(maps.length, (index) {
+
+      var satir=maps[index];
+
+      if(satir['username']==username ){
+        user_id= satir['kisi_id'];
+      }
+
+    });
+
+    print("yyyyyyyyyyyyyy");
+    print(durak_id);
+    print(user_id);
+    print("yyyyyyyyyyyyyy");
+  if(durak_id!=0 && user_id!=0 ) {
+    var bilgiler = Map<String, dynamic>();
+    bilgiler["durak_id"] = durak_id;
+    bilgiler["kisi_id"] = user_id;
+    await db.insert("DurakKisi", bilgiler);
+    await durakKisiEkle(durak_id,1);
+  }
+
+  }
+
+
   Future<int> durakIDGetir(String station_name) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
@@ -63,7 +96,9 @@ class Duraklardao{
 
   }
 
-  Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
+
+
+    Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
 
@@ -113,6 +148,9 @@ class Duraklardao{
 
   }
 
+
+
+
   Future<int> kayitKontrol(String stationName) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
@@ -150,6 +188,8 @@ class Duraklardao{
     });
 
   }
+
+
 
   Future<List<Duraklar>> rastgele2durakGetir() async{
 

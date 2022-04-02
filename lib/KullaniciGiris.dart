@@ -204,8 +204,11 @@ class _KullaniciGirisState extends State<KullaniciGiris> {
                    print(sonuc);
 
                    if (sonuc) {
+                     print("lan ne bu amq");
+                     String qq=nameController.text;
                      Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => UserDisplay()));
+
+                         MaterialPageRoute(builder: (context) => UserDisplay(username: qq)));
                      nameController.text = "";
                      passwordController.text = "";
                    }
