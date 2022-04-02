@@ -15,6 +15,7 @@ class UserDisplay extends StatefulWidget {
   @override
   State<UserDisplay> createState() => _UserDisplayState();
 }
+GoogleMapController? mapController;
 
 class _UserDisplayState extends State<UserDisplay> {
 
@@ -85,6 +86,11 @@ class _UserDisplayState extends State<UserDisplay> {
                   markers: Set<Marker>.of(isaretler),
                   onMapCreated: (GoogleMapController controller){
                     haritaKontrol.complete(controller);
+
+                    setState(() {
+                      mapController=controller;
+                    });
+
                   },
                 ),
               ),
@@ -150,8 +156,24 @@ class _UserDisplayState extends State<UserDisplay> {
                                         print("durak:");
                                         print(hangidurak);
                                         await Duraklardao().DuragaAgaEkle(hangidurak,widget.username);
+                                        var location=[];
+                                        location=await Duraklardao().durakLATLNGgetir(hangidurak);
+                                        if(!location.isEmpty){
+                                          print("location knk");
+                                          print(location[0]);
+                                        }
+                                        else{
+                                          print("Böyle bir durak yok amkq");
+                                        }
+                                        GoogleMapController controller = await haritaKontrol.future;
 
-                                        setState(() async{
+                                        setState(() {
+
+
+                                          var gidilecekKonum = CameraPosition(target: LatLng(double.parse(location[0]),double.parse(location[1])),zoom: 8,);
+
+                                          controller.animateCamera(CameraUpdate.newCameraPosition(gidilecekKonum));
+
                                           stationController.text="";
                                           latController.text="";
                                           lngController.text="";

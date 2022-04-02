@@ -37,10 +37,13 @@ class Duraklardao{
   }
 
 
+
+
   Future<void> DuragaAgaEkle(String stationName,String username) async{
 
     int user_id=0;
     int durak_id=await durakIDGetir(stationName);
+
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
     List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Kisiler");
@@ -51,14 +54,11 @@ class Duraklardao{
 
       if(satir['username']==username ){
         user_id= satir['kisi_id'];
+
       }
 
     });
 
-    print("yyyyyyyyyyyyyy");
-    print(durak_id);
-    print(user_id);
-    print("yyyyyyyyyyyyyy");
   if(durak_id!=0 && user_id!=0 ) {
     var bilgiler = Map<String, dynamic>();
     bilgiler["durak_id"] = durak_id;
@@ -97,8 +97,40 @@ class Duraklardao{
   }
 
 
+  Future<List> durakLATLNGgetir(String station_name) async{
+    var location = [];
 
-    Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+
+    List<Map<String,dynamic>> maps=await db.rawQuery("Select * From Duraklar");
+
+    List<Duraklar> liste=[];
+
+    List.generate(maps.length, (index) {
+
+      var satir=maps[index];
+
+      liste.add(Duraklar(satir['durak_id'], satir['durak_ad'], satir['lat'], satir['lng'], satir['kisi_sayisi']));
+
+
+    });
+
+    for(int i=0;i<liste.length;i++){
+      if(liste[i].durak_ad==station_name){
+        location.add(liste[i].lat);
+        location.add(liste[i].lng);
+
+        return location; liste[i].lng;
+      }
+    }
+    return location;
+
+  }
+
+
+
+
+  Future<void> durakKisiEkle(int durak_id,int kisi_sayisi) async{
 
     var db = await VeritabaniYardimcisi.veritabaniErisim();
 
