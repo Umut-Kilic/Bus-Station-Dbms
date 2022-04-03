@@ -310,136 +310,141 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                                   context: context,
                                   builder: (context) => SingleChildScrollView(
                                     child: Container(
-                                      child: AlertDialog(
-                                        title: Text("Durağa Kişi Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                        backgroundColor: Colors.orangeAccent,
-                                        content: SizedBox(
-                                          height: height3,
-                                          width: width1,
-                                          child: Column(
-                                            children: [
-                                              SingleChildScrollView(
-                                                scrollDirection: Axis.horizontal,
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(vertical: 16),
-                                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(12),
-                                                    border: Border.all(color: Colors.black,width: 4),
-                                                  ),
-                                                  child: DropdownButtonHideUnderline(
-                                                    child: DropdownButton<String>(
+                                      child: StatefulBuilder(
+                                        builder: (context,setState){
+                                          return  AlertDialog(
+                                            title: Text("Durağa Kişi Ekleme Alanı",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                            backgroundColor: Colors.orangeAccent,
+                                            content: SizedBox(
+                                              height: height3,
+                                              width: width1,
+                                              child: Column(
+                                                children: [
+                                                  SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: Container(
+                                                      margin: EdgeInsets.symmetric(vertical: 16),
+                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        border: Border.all(color: Colors.black,width: 4),
+                                                      ),
+                                                      child: DropdownButtonHideUnderline(
+                                                        child: DropdownButton<String>(
 
-                                                      onChanged: (String? secilenVeri){
-                                                        print("secilen veri $secilenVeri");
-                                                        setState(() {
-                                                          secilenDurak=secilenVeri!;
+                                                          onChanged: (String? secilenVeri){
+                                                            print("secilen veri $secilenVeri");
+                                                            setState(() {
+                                                              secilenDurak=secilenVeri!;
 
-                                                        });
-                                                      },
-                                                      value: secilenDurak,
-                                                      icon: Icon(Icons.arrow_drop_down),
-                                                      iconSize: 36,
-                                                      items: durakAdlar.map<DropdownMenuItem<String>>((String value){
-                                                        return DropdownMenuItem<String>(
-                                                          value: value,
-                                                          child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
+                                                            });
+                                                          },
+                                                          value: secilenDurak,
+                                                          icon: Icon(Icons.arrow_drop_down),
+                                                          iconSize: 36,
+                                                          items: durakAdlar.map<DropdownMenuItem<String>>((String value){
+                                                            return DropdownMenuItem<String>(
+                                                              value: value,
+                                                              child: Text("Durak : ${value}",style: TextStyle(color: Colors.black,fontSize: 20),),
 
-                                                        );
-                                                      }).toList(),
-
-
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+                                                            );
+                                                          }).toList(),
 
 
-                                              Expanded(
-                                                child: Theme(
-                                                    data:Theme.of(context).copyWith(
-                                                      colorScheme: ThemeData().colorScheme.copyWith(
-                                                        primary:Colors.white,
+                                                        ),
                                                       ),
                                                     ),
-                                                    child: ozelTextField(color:Colors.green,icon:Icons.person,tftctr:person_count_Controller,hintText: "Duraktaki kişi sayısı",label: "Kişi sayısı:")
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: TextButton(
-                                              child: Text("İptal",style: TextStyle(color: Colors.white),),
+                                                  ),
 
-                                              onPressed: (){
-                                                person_count_Controller.text="";
-                                                Navigator.pop(context);
 
-                                              },
-
+                                                  Expanded(
+                                                    child: Theme(
+                                                        data:Theme.of(context).copyWith(
+                                                          colorScheme: ThemeData().colorScheme.copyWith(
+                                                            primary:Colors.white,
+                                                          ),
+                                                        ),
+                                                        child: ozelTextField(color:Colors.green,icon:Icons.person,tftctr:person_count_Controller,hintText: "Duraktaki kişi sayısı",label: "Kişi sayısı:")
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          TextButton(
-                                            child: Text("Duraktaki kişileri sıfırla",style: TextStyle(color: Colors.white),),
-                                            onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(secilenDurak);
+                                            actions: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(0.0),
+                                                child: TextButton(
+                                                  child: Text("İptal",style: TextStyle(color: Colors.white),),
 
-                                              if(id>0){
-                                                await durakKisiSifirla(id);
+                                                  onPressed: (){
+                                                    person_count_Controller.text="";
+                                                    Navigator.pop(context);
 
-                                                setState(() async{
+                                                  },
 
+                                                ),
+                                              ),
+                                              TextButton(
+                                                child: Text("Duraktaki kişileri sıfırla",style: TextStyle(color: Colors.white),),
+                                                onPressed: () async {
+                                                  int id=await Duraklardao().durakIDGetir(secilenDurak);
 
+                                                  if(id>0){
+                                                    await durakKisiSifirla(id);
 
-                                                  Navigator.pop(context);
-
-                                                });
-                                              }
-                                              else{
-                                                /*ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: (){
-                                                      return Text("asfsfa");
-                                                    }),
-                                                );*/
-                                              }
-
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("Kişi ekle",style: TextStyle(color: Colors.white),),
-                                            onPressed: () async {
-                                              int id=await Duraklardao().durakIDGetir(secilenDurak);
-
-                                              if(id>0){
-                                                await durakKisiEkle(id, int.parse(person_count_Controller.text));
-
-                                                setState(() async{
-
-                                                  stationController.text="";
-                                                  person_count_Controller.text="";
-
-                                                  Navigator.pop(context);
-
-                                                });
-                                              }
-                                              else{
-                                                /*ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: (){
-                                                      return Text("asfsfa");
-                                                    }),
-                                                );*/
-                                              }
+                                                    setState(() async{
 
 
 
-                                            },
-                                          ),
+                                                      Navigator.pop(context);
 
-                                        ],
+                                                    });
+                                                  }
+                                                  else{
+                                                    /*ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: (){
+                                                        return Text("asfsfa");
+                                                      }),
+                                                  );*/
+                                                  }
+
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text("Kişi ekle",style: TextStyle(color: Colors.white),),
+                                                onPressed: () async {
+                                                  int id=await Duraklardao().durakIDGetir(secilenDurak);
+
+                                                  if(id>0){
+                                                    await durakKisiEkle(id, int.parse(person_count_Controller.text));
+
+                                                    setState(() async{
+
+                                                      stationController.text="";
+                                                      person_count_Controller.text="";
+
+                                                      Navigator.pop(context);
+
+                                                    });
+                                                  }
+                                                  else{
+                                                    /*ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: (){
+                                                        return Text("asfsfa");
+                                                      }),
+                                                  );*/
+                                                  }
+
+
+
+                                                },
+                                              ),
+
+                                            ],
+                                          );
+                                        },
+
                                       ),
                                     ),
 
