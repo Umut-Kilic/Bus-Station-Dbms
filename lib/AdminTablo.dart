@@ -52,14 +52,16 @@ class _AdminTabloState extends State<AdminTablo> {
                     mySpesicialDataColumn("Kişi Sayısı"),
 
                   ],
-                  rows:
+                  rows:mySpesicialDataRow(stationNameList,passangerCountList,passangerCountList.length)
+
+                  )
 
                 )
 
-                ),
-              ),
-            );
+                );
+
         }
+
           else{
             return CircularProgressIndicator();
           }
