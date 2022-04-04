@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yazlab2_proje2/database/DurakKisidao.dart';
+import 'dart:ui' as ui;
 
 import 'database/Duraklar.dart';
 import 'database/Duraklardao.dart';
@@ -54,30 +57,7 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
     return duraklar;
   }
 
-  List<Marker> _createMarker (){
-    var array= <Marker>[];
 
-    for( var i = 0 ; i <= listLat.length-1; i++ ) {
-
-      var x=Marker(
-          markerId: MarkerId("asdsa"),
-          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
-              onTap: () {
-                baslangicKonum = CameraPosition(
-                  target: LatLng(40.766666, 29.916668),
-                  zoom: 8,
-                );
-
-              print(listLat[i]);
-              }
-
-      );
-
-      array.add(x);
-    }
-
-    return array;
-  }
 
   Future<void> durakGuncelle(int durak_id,String stationName,String  lat,String lng,int kisi_sayisi) async {
     await Duraklardao().durakGuncelle(durak_id, stationName, lat, lng, kisi_sayisi);
@@ -86,6 +66,42 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
   Future<void> durakSil(int durak_id) async {
     await Duraklardao().durakSil(durak_id);
     await DurakKisidao().durakKisiSil(durak_id);
+  }
+
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
+  Future<List<Marker>> _createMarker  ()async{
+    var array= <Marker>[];
+    final Uint8List markerIcon = await getBytesFromAsset('resimler/station.png', 100);
+
+    for( var i = 0 ; i <= listLat.length-1; i++ ) {
+
+      var x=Marker(
+          markerId: MarkerId("asdsa"),
+          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
+          icon: BitmapDescriptor.fromBytes(markerIcon) , //Icon for Marker
+
+          onTap: () {
+            baslangicKonum = CameraPosition(
+              target: LatLng(40.766666, 29.916668),
+              zoom: 8,
+            );
+
+            print(listLat[i]);
+          }
+
+      );
+
+      array.add(x);
+    }
+
+    return array;
   }
 
 
@@ -120,15 +136,27 @@ class _AdminDurakIslemleriState extends State<AdminDurakIslemleri> {
                       SizedBox(
                         width: 400,
                         height: height2,
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: baslangicKonum,
-                          markers: Set<Marker>.of(_createMarker()),
-                          onMapCreated: (GoogleMapController controller) {
-                            haritaKontrol.complete(controller);
-                          },
+                        child: FutureBuilder<List<Marker>>(
+                          future: _createMarker(),
+                          builder: (context, snapshot) {
+                            if(snapshot.hasData){
+                              List<Marker>? marker=snapshot.data;
+                              return GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: baslangicKonum,
+                                markers: Set<Marker>.of(marker!),
+                                onMapCreated: (GoogleMapController controller) {
+                                  haritaKontrol.complete(controller);
+                                },
+                              );
+                            }
+                            else{
+                              return CircularProgressIndicator();
+                            }
+                          }
+                          ),
+
                         ),
-                      ),
 
                       Padding(
                         padding: const EdgeInsets.all(0.0),

@@ -1,10 +1,15 @@
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'database/Duraklar.dart';
 import 'database/Duraklardao.dart';
 import 'database/DurakKisidao.dart';
+import 'dart:ui' as ui;
+
 import 'database/Kisiler.dart';
 import 'database/Kisilerdao.dart';
 
@@ -69,9 +74,65 @@ class _UserDisplayState extends State<UserDisplay> {
   void initState() {
     super.initState();
     durakAdGetir();
+
   }
 
   String? secilenDurak;
+
+
+  List<Duraklar> duraklar=[];
+  List listLat = [];
+  List listLng = [];
+
+  Future<List<Marker>> getBusStation() async {
+
+    duraklar=[];
+    listLat = [];
+    listLng = [];
+
+    duraklar=await Duraklardao().tumDuraklar();
+
+    for(int i=0;i<duraklar.length;i++){
+      listLat.add(duraklar[i].lat);
+      listLng.add(duraklar[i].lng);
+    }
+
+    // return duraklar;
+
+    var array= <Marker>[];
+    final Uint8List markerIcon = await getBytesFromAsset('resimler/station.png', 100);
+
+    for( var i = 0 ; i <= listLat.length-1; i++ ) {
+
+      var x=Marker(
+          markerId: MarkerId("asdsa"),
+          position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
+          icon: BitmapDescriptor.fromBytes(markerIcon) , //Icon for Marker
+
+          onTap: () {
+            baslangicKonum = CameraPosition(
+              target: LatLng(40.766666, 29.916668),
+              zoom: 8,
+            );
+
+            print(listLat[i]);
+          }
+
+      );
+
+      array.add(x);
+    }
+
+    return array;
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
 
 
 
@@ -123,17 +184,28 @@ class _UserDisplayState extends State<UserDisplay> {
                 SizedBox(
                   width: 400,
                   height: 300,
-                  child: GoogleMap(
-                    mapType: MapType.normal,
-                    initialCameraPosition: baslangicKonum,
-                    markers: Set<Marker>.of(isaretler),
-                    onMapCreated: (GoogleMapController controller){
-                      haritaKontrol.complete(controller);
+                  child: FutureBuilder<List<Marker>>(
+                    future: getBusStation(),
+                    builder: (context,snapShot){
+                      if(snapShot.hasData){
+                        List<Marker>? marker =snapShot.data;
+                        return GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: baslangicKonum,
+                          markers: Set<Marker>.of(marker!),
+                          onMapCreated: (GoogleMapController controller){
+                            haritaKontrol.complete(controller);
 
-                      setState(() {
-                        mapController=controller;
-                      });
+                            setState(() {
+                              mapController=controller;
+                            });
 
+                          },
+                        );
+                      }
+                      else{
+                        return CircularProgressIndicator();
+                      }
                     },
                   ),
                 ),

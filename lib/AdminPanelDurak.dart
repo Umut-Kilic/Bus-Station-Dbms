@@ -1,12 +1,16 @@
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yazlab2_proje2/AdminTablo.dart';
 import 'package:yazlab2_proje2/database/DurakKisidao.dart';
 import 'package:yazlab2_proje2/database/Duraklar.dart';
 import 'package:yazlab2_proje2/database/Duraklardao.dart';
+
+import 'dart:ui' as ui;
 
 import 'AdminDurakIslemleri.dart';
 
@@ -44,7 +48,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
   List listLat = [];
   List listLng = [];
 
-  Future getBusStation() async {
+  Future<List<Marker>> getBusStation() async {
     duraklar=[];
     listLat = [];
     listLng = [];
@@ -56,36 +60,42 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
       listLng.add(duraklar[i].lng);
     }
 
+   // return duraklar;
 
-    return duraklar;
-  }
-
-
-  List<Marker> _createMarker (){
     var array= <Marker>[];
+    final Uint8List markerIcon = await getBytesFromAsset('resimler/station.png', 100);
 
     for( var i = 0 ; i <= listLat.length-1; i++ ) {
 
       var x=Marker(
           markerId: MarkerId("asdsa"),
           position: LatLng( double.parse(listLat[i]), double.parse(listLng[i])),
+          icon: BitmapDescriptor.fromBytes(markerIcon) , //Icon for Marker
+
           onTap: () {
-        //this is what you're looking for!
-        baslangicKonum = CameraPosition(
-          target: LatLng(40.766666, 29.916668),
-          zoom: 8,
-        );
+            baslangicKonum = CameraPosition(
+              target: LatLng(40.766666, 29.916668),
+              zoom: 8,
+            );
 
-        print(listLat[i]);
-      }
-
+            print(listLat[i]);
+          }
 
       );
+
       array.add(x);
     }
 
     return array;
   }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
 
 
   TextEditingController stationController=TextEditingController();
@@ -137,8 +147,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
 
 
 
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -148,7 +156,6 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
     final height1 = MediaQuery.of(context).size.height * 0.36;
     final height2 = MediaQuery.of(context).size.height * 0.60;
     final height3 = MediaQuery.of(context).size.height * 0.25;
-
     return FutureBuilder<dynamic> (
       future: getBusStation(),
         builder: (context, snapshot) {
@@ -157,6 +164,7 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
           }
 
           else if(snapshot.hasData){
+            List<Marker> marker=snapshot.data;
             return Scaffold(
               appBar: AppBar(
                 title: Text("Admin Durak İşlemleri"),
@@ -169,16 +177,18 @@ class _AdminPanelDurakState extends State<AdminPanelDurak> {
                       SizedBox(
                         width: 400,
                         height: height2,
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: baslangicKonum,
-                          markers:  Set<Marker>.of( _createMarker()),
+                        child:  GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: baslangicKonum,
+                                markers:  Set<Marker>.of( marker),
 
-                          onMapCreated: (GoogleMapController controller){
-                            haritaKontrol.complete(controller);
-                          },
+                                onMapCreated: (GoogleMapController controller){
+                                  haritaKontrol.complete(controller);
+                                },
+                              ),
+
                         ),
-                      ),
+
                       ElevatedButton(
                         onPressed: (){
                           Future.delayed(
