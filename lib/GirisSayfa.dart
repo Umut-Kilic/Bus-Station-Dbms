@@ -43,7 +43,8 @@ class _GirisSayfaState extends State<GirisSayfa> {
 
     final width1 = MediaQuery.of(context).size.width * 0.45;
 
-    final height1 = MediaQuery.of(context).size.height * 0.15;
+    final height1 = MediaQuery.of(context).size.height * 0.25;
+    final height2 = MediaQuery.of(context).size.height * 0.10;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +55,7 @@ class _GirisSayfaState extends State<GirisSayfa> {
 
         children: [
           Padding(
-            padding: const EdgeInsets.only(top:60.0),
+            padding: const EdgeInsets.only(top:70.0),
             child: SizedBox(
               height: height1,
               width: width1,
@@ -74,7 +75,7 @@ class _GirisSayfaState extends State<GirisSayfa> {
             ),),
           ),
           SizedBox(
-            height: height1,
+            height: height2,
           ),
           Padding(
             padding: const EdgeInsets.only(top:20.0),

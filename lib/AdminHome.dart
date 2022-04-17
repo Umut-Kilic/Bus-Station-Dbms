@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yazlab2_proje2/AdminMap.dart';
 import 'package:yazlab2_proje2/AdminPanelDurak.dart';
 import 'package:yazlab2_proje2/database/Duraklardao.dart';
 
@@ -143,7 +144,9 @@ class _AdminHomeState extends State<AdminHome> {
                       ),
                     ),
                     ElevatedButton(
-                        onPressed: () {}, child: Text("Otobüs İşlemleri")),
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminMap()));
+                        }, child: Text("Otobüs İşlemleri")),
                   ],
                 ),
               ],

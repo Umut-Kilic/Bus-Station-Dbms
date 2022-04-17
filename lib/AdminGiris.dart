@@ -97,6 +97,8 @@ class _AdminGirisState extends State<AdminGiris> {
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(backgroundColor: Colors.white,content: Text("Girdiğiniz bilgiler yanlıştır !",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),))
                           );
+                          nameController.text="";
+                          passwordController.text="";
                         }
 
                       }
